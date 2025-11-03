@@ -12,7 +12,7 @@
 
         <div class="hero">
             @if($bread->image)
-                <img class="image" src="{{ asset($bread->image) }}" alt="{{ $bread->name }}">
+                <img class="image" src="{{ asset('storage/' . $bread->image) }}" alt="{{ $bread->name }}">
             @else
                 <img class="image" src="{{ $bread->name }}">
             @endif

@@ -13,7 +13,7 @@
         <div class="container">
             <h1>Mayra D'Light</h1>
             <p class="lead">Roti hangat, resep keluarga.</p>
-            <p><a class="cta" href="#catalog">Lihat Katalog</a></p>
+            <p><a class="cta" href="#Filter">Pilih Kategori</a></p>
         </div>
     </header>
 

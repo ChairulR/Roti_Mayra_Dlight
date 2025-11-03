@@ -38,4 +38,9 @@ class FrontPageController extends Controller
     {
         return view('breads.show', compact('bread'));
     }
+
+    public function about()
+    {
+        return view('about');
+    }
 }
