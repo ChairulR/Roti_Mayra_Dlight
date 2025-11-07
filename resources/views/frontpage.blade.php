@@ -9,15 +9,26 @@
 </head>
 
 <body>
-    <header class="hero">
-        <div class="container">
-            <h1>Mayra D'Light</h1>
-            <p class="lead">Roti hangat, resep keluarga.</p>
-            <p><a class="cta" href="#Filter">Pilih Kategori</a></p>
+    <header class="topnav">
+        <div class="container nav-inner">
+            <a class="brand" href="{{ route('home') }}">Mayra D'Light</a>
+            <nav class="nav-links">
+                <a href="{{ route('home') }}">Beranda</a>
+                <a href="#catalog">Katalog</a>
+                <a href="{{ route('about') }}">Tentang</a>
+            </nav>
         </div>
     </header>
 
     <main class="container">
+        <header class="hero">
+            <div class="container">
+                <h1>Mayra D'Light</h1>
+                <p class="lead">Roti hangat, resep keluarga.</p>
+                <p><a class="cta" href="#catalog">Pilih Kategori</a></p>
+            </div>
+        </header>
+
         <section id="catalog">
             <h2>Katalog Roti</h2>
 
@@ -53,7 +64,8 @@
             </div>
             @endif
         </section>
-    </main>
+        </main>
+    </div>
 
     <script src="{{ asset('js/app.js') }}"></script>
 </body>
