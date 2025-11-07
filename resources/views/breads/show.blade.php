@@ -7,20 +7,36 @@
     <link rel="stylesheet" href="{{ asset('css/simple.css') }}">
 </head>
 <body>
-    <div class="container">
+    <header class="topnav">
+        <div class="container nav-inner">
+            <a class="brand" href="{{ route('home') }}">Mayra D'Light</a>
+            <nav class="nav-links">
+                <a href="{{ route('home') }}">Beranda</a>
+                <a href="{{ route('about') }}">Tentang</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
         <a class="back" href="{{ route('home') }}">← Kembali ke Katalog</a>
 
-        <div class="hero">
-            @if($bread->image)
-                <img class="image" src="{{ asset('storage/' . $bread->image) }}" alt="{{ $bread->name }}">
-            @else
-                <img class="image" src="{{ $bread->name }}">
-            @endif
+        <div class="hero bread-hero">
+                    <div class="bread-media">
+                        @if($bread->image)
+                            <img class="image" src="{{ asset('storage/' . $bread->image) }}" alt="{{ $bread->name }}">
+                        @else
+                            <img class="image" src="{{ asset('images/placeholder.png') }}" alt="{{ $bread->name }}">
+                        @endif
+                    </div>
 
-            <h1 style="margin-top:12px">{{ $bread->name }}</h1>
-            <div style="color:#6b7280">{{ $bread->description }}</div>
-            <div class="price">Rp {{ number_format($bread->price, 0, ',', '.') }}</div>
-        </div>
+                    <div class="bread-details">
+                        <h1>{{ $bread->name }}</h1>
+                        <div class="muted">{{ $bread->description }}</div>
+                        <div class="price">Rp {{ number_format($bread->price, 0, ',', '.') }}</div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script src="{{ asset('js/app.js') }}"></script>
