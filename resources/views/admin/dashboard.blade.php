@@ -72,11 +72,27 @@
 
 <body>
 
-    <h1>Admin Dashboard</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1>Admin Dashboard</h1>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            @auth
+            <span>Welcome, <strong>{{ Auth::user()->name }}</strong> ({{ Auth::user()->role }})</span>
+            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                @csrf
+                <button type="submit" style="background: #dc3545;">Logout</button>
+            </form>
+            @endauth
+        </div>
+    </div>
 
     {{-- Notifikasi sukses --}}
     @if(session('success'))
     <div class="alert">{{ session('success') }}</div>
+    @endif
+
+    {{-- Notifikasi error --}}
+    @if(session('error'))
+    <div class="alert" style="background: #fdd; border-left-color: #f00;">{{ session('error') }}</div>
     @endif
 
     {{-- Tambah Kategori --}}

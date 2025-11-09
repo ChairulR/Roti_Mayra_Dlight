@@ -11,13 +11,45 @@
 <body>
     <header class="hero">
         <div class="container">
-            <h1>Mayra D'Light</h1>
-            <p class="lead">Roti hangat, resep keluarga.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>Mayra D'Light</h1>
+                    <p class="lead">Roti hangat, resep keluarga.</p>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    @auth
+                        <span style="color: white;">Welcome, <strong>{{ Auth::user()->name }}</strong></span>
+                        @if(Auth::user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" style="color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">Admin Panel</a>
+                        @endif
+                        <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                            @csrf
+                            <button type="submit" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">Logout</button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" style="color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 5px;">Login</a>
+                        <a href="{{ route('register') }}" style="color: white; text-decoration: none; background: rgba(255,255,255,0.3); padding: 0.5rem 1rem; border-radius: 5px;">Register</a>
+                    @endauth
+                </div>
+            </div>
             <p><a class="cta" href="#Filter">Pilih Kategori</a></p>
         </div>
     </header>
 
     <main class="container">
+        {{-- Notifications --}}
+        @if(session('success'))
+        <div style="background: #d4edda; color: #155724; padding: 1rem; margin-bottom: 1rem; border-radius: 5px; border-left: 4px solid #28a745;">
+            {{ session('success') }}
+        </div>
+        @endif
+
+        @if(session('error'))
+        <div style="background: #f8d7da; color: #721c24; padding: 1rem; margin-bottom: 1rem; border-radius: 5px; border-left: 4px solid #dc3545;">
+            {{ session('error') }}
+        </div>
+        @endif
+
         <section id="catalog">
             <h2>Katalog Roti</h2>
 
