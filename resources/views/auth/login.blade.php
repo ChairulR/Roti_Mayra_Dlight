@@ -292,154 +292,39 @@
     </style>
 </head>
 <body>
-    <div class="logo-circle"></div>
-    
-    <div class="login-container">
-        <div class="logo">
-            <div class="logo-icon">Mayra D'Light</div>
-            <div class="tagline">Roti hangat, resep keluarga.</div>
-        </div>
-
-        <h2 class="welcome-text">Welcome Back!</h2>
+    <div class="auth-card">
+        <h1>Masuk — Mayra D'Light</h1>
 
         @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="alert alert-error">
-                {{ session('error') }}
-            </div>
+            <div class="alert alert-success">{{ session('success') }}</div>
         @endif
 
         @if($errors->any())
-            <div class="alert alert-error">
-                @foreach($errors->all() as $error)
-                    {{ $error }}<br>
-                @endforeach
-            </div>
+            <div class="alert alert-error">{{ $errors->first() }}</div>
         @endif
 
-        <form action="{{ route('login.post') }}" method="POST" id="loginForm">
+        <form action="{{ route('login.post') }}" method="POST">
             @csrf
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    placeholder="emilie.smith @ gmail.com" 
-                    value="{{ old('email') }}"
-                    required
-                >
-                <div class="validation-message success" id="emailValidation" style="display: none;">Perfect!</div>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ old('email') }}" required>
+
+            <label for="password">Kata Sandi</label>
+            <div style="display:flex;gap:.5rem;align-items:center">
+                <input type="password" id="password" name="password" required>
+                <button type="button" data-toggle="password" data-target="password" class="btn" style="background:#eee;color:#333;border-radius:6px;padding:.5rem">Tampilkan</button>
             </div>
 
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
-                    placeholder="••••••••••" 
-                    required
-                >
-                <span class="password-toggle" onclick="togglePassword()" id="toggleIcon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                    </svg>
-                </span>
-                <div class="validation-message success" id="passwordValidation" style="display: none;">Your password is strong</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.5rem">
+                <label style="font-size:.9rem"><input type="checkbox" name="remember"> Ingat saya</label>
+                <a href="#" style="font-size:.9rem;color:#6b5744;text-decoration:none">Lupa kata sandi?</a>
             </div>
 
-            <button type="submit" class="btn-submit">Sign in</button>
+            <button type="submit" class="btn" style="margin-top:.6rem">Masuk</button>
         </form>
 
-        <div class="forgot-password">
-            <a href="#">Forget My Password</a>
-        </div>
-
-        <div class="register-link">
-            Don't have an account? <a href="{{ route('register') }}">Register here</a>
-        </div>
-
-        <div class="footer-links">
-            <a href="#">Term of use</a>
-            <a href="#">Privacy policy</a>
-        </div>
+        <p class="auth-footer">Belum punya akun? <a href="{{ route('register') }}">Daftar</a></p>
     </div>
-
-    <div class="action-buttons">
-        <button class="btn-action btn-request" onclick="window.location.href='{{ route('register') }}'">Request An Account</button>
-        <button class="btn-action btn-help">Need Help?</button>
-    </div>
-
-    <script>
-        // Email validation
-        document.getElementById('email').addEventListener('input', function(e) {
-            const emailValidation = document.getElementById('emailValidation');
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            
-            if (emailRegex.test(e.target.value)) {
-                emailValidation.style.display = 'block';
-                emailValidation.classList.remove('error');
-                emailValidation.classList.add('success');
-                emailValidation.textContent = 'Perfect!';
-            } else if (e.target.value.length > 0) {
-                emailValidation.style.display = 'block';
-                emailValidation.classList.remove('success');
-                emailValidation.classList.add('error');
-                emailValidation.textContent = 'Invalid email format';
-            } else {
-                emailValidation.style.display = 'none';
-            }
-        });
-
-        // Password validation
-        document.getElementById('password').addEventListener('input', function(e) {
-            const passwordValidation = document.getElementById('passwordValidation');
-            
-            if (e.target.value.length >= 8) {
-                passwordValidation.style.display = 'block';
-                passwordValidation.classList.remove('error');
-                passwordValidation.classList.add('success');
-                passwordValidation.textContent = 'Your password is strong';
-            } else if (e.target.value.length > 0) {
-                passwordValidation.style.display = 'block';
-                passwordValidation.classList.remove('success');
-                passwordValidation.classList.add('error');
-                passwordValidation.textContent = 'Password must be at least 8 characters';
-            } else {
-                passwordValidation.style.display = 'none';
-            }
-        });
-
-        // Toggle password visibility
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const toggleIcon = document.getElementById('toggleIcon');
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            
-            // Change icon based on password visibility
-            if (type === 'text') {
-                // Eye slash icon (hidden)
-                toggleIcon.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>
-                    </svg>
-                `;
-            } else {
-                // Eye icon (visible)
-                toggleIcon.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                    </svg>
-                `;
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
+    <script src="{{ asset('js/auth.js') }}"></script>
 </body>
 </html>

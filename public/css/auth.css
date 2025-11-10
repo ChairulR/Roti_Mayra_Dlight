@@ -1,0 +1,21 @@
+:root{--brand:#c7783a;--muted:#6b5744}
+body.auth-body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:linear-gradient(135deg,#f5e6d3 0%,#d4a574 100%);}
+.auth-card{max-width:420px;margin:4rem auto;padding:1.2rem;border-radius:8px;background:#fff;border:1px solid #eee;box-shadow:0 6px 18px rgba(0,0,0,0.04)}
+.auth-card h1{color:var(--brand);text-align:center;margin-bottom:.5rem}
+.auth-card form{display:grid;gap:.8rem;margin-top:1rem}
+.auth-card label{font-size:.95rem;color:var(--muted)}
+.auth-card input{padding:.6rem;border:1px solid #ddd;border-radius:6px;font-size:1rem}
+.auth-card .btn{background:var(--brand);color:#fff;padding:.8rem;border:none;border-radius:6px;font-weight:600;cursor:pointer}
+.alert{margin:0.8rem 0;padding:.6rem;border-radius:6px}
+.alert-success{background:#e6f7ea;color:#2f8a3a}
+.alert-error{background:#fdecea;color:#a33}
+.auth-footer{text-align:center;margin-top:1rem}
+.auth-footer a{color:var(--muted);text-decoration:none}
+.nav-auth-actions{display:flex;gap:.5rem;align-items:center}
+
+/* Input row used for password + toggle */
+.auth-input-row{display:flex;gap:.5rem;align-items:center}
+.toggle-btn{background:#eee;color:#333;border-radius:6px;padding:.5rem;border:1px solid #ddd;cursor:pointer}
+.remember-row{display:flex;justify-content:space-between;align-items:center;margin-top:.5rem}
+.btn{border-radius:6px}
+.auth-card input[type="checkbox"]{width:auto}
