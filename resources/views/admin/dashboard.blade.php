@@ -1,53 +1,163 @@
-@extends('admin.layouts.admin')
+<!DOCTYPE html>
+<html lang="id">
 
-@section('content')
-<h1>Dashboard Admin</h1>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Admin Dashboard — Mayra D'Light</title>
+    <link rel="stylesheet" href="{{ asset('css/simple-modular.css') }}">
+    <style>
+        body {
+            margin: 2rem;
+            font-family: sans-serif;
+            background: #f9f9f9;
+        }
 
-<p>
-    Selamat datang di panel admin Mayra D'Light!
-</p>
+        h1,
+        h2 {
+            margin-bottom: .5rem;
+        }
 
-<div class="stats">
-    <div class="card">
-        <h3>Total Kategori</h3>
-        <p>{{ $categories->count() }}</p>
-    </div>
+        form {
+            margin-bottom: 2rem;
+        }
 
-    <div class="card">
-        <h3>Total Menu Roti</h3>
-        <p>{{ $breads->count() }}</p>
-    </div>
-</div>
+        input,
+        textarea,
+        select,
+        button {
+            padding: .5rem;
+            margin-top: .4rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
 
-<hr>
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
 
-<h2>Daftar Menu Roti</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Nama</th>
-            <th>Deskripsi</th>
-            <th>Kategori</th>
-            <th>Harga</th>
-            <th>Gambar</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($breads as $bread)
-        <tr>
-            <td>{{ $bread->name }}</td>
-            <td>{{ $bread->description }}</td>
-            <td>{{ $bread->category ? $bread->category->name : '-' }}</td>
-            <td>Rp {{ number_format($bread->price, 0, ',', '.') }}</td>
-            <td>
-                @if ($bread->image)
-                <img src="{{ asset('storage/' . $bread->image) }}" width="60">
-                @else
-                <small>Tidak ada gambar</small>
-                @endif
-            </td>
-        </tr>
-        @endforeach
-    </tbody>
-</table>
-@endsection
+        button:hover {
+            background: #0056b3;
+        }
+
+        .table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 1rem;
+            background: white;
+        }
+
+        .table th,
+        .table td {
+            border: 1px solid #ccc;
+            padding: .5rem;
+            text-align: center;
+        }
+
+        .alert {
+            background: #def;
+            padding: .5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #39f;
+        }
+
+        img {
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Admin Dashboard</h1>
+
+    {{-- Notifikasi sukses --}}
+    @if(session('success'))
+    <div class="alert">{{ session('success') }}</div>
+    @endif
+
+    {{-- Tambah Kategori --}}
+    <section>
+        <h2>Tambah Kategori</h2>
+        <form method="POST" action="{{ route('admin.categories.store') }}">
+            @csrf
+            <input type="text" name="name" placeholder="Nama kategori" required>
+            <button type="submit">Tambah</button>
+        </form>
+    </section>
+
+    {{-- Tambah Roti --}}
+    <section>
+        <h2>Tambah Roti</h2>
+        <form method="POST" action="{{ route('admin.breads.store') }}" enctype="multipart/form-data">
+            @csrf
+            <input type="text" name="name" placeholder="Nama roti" required><br>
+            <textarea name="description" placeholder="Deskripsi"></textarea><br>
+
+            {{-- Input harga berbentuk angka, bukan dropdown --}}
+            <input type="number" name="price" placeholder="Harga (Rp)" min="0" step="100" required><br>
+
+            <select name="category_id" required>
+                <option value="">-- Pilih Kategori --</option>
+                @foreach($categories as $cat)
+                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                @endforeach
+            </select><br>
+
+            <input type="file" name="image" accept="image/*"><br>
+            <button type="submit">Tambah Roti</button>
+        </form>
+    </section>
+
+
+    {{-- Daftar Roti --}}
+    <section>
+        <h2>Daftar Roti</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>Deskripsi</th>
+                    <th>Kategori</th>
+                    <th>Harga</th>
+                    <th>Gambar</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($breads as $bread)
+                <tr>
+                    <td>{{ $bread->name }}</td>
+                    <td>{{ $bread->description ?? '-' }}</td>
+                    <td>{{ $bread->category->name ?? '-' }}</td>
+                    <td>Rp {{ number_format($bread->price, 0, ',', '.') }}</td>
+                    <td>
+                        @if($bread->image)
+                        <img src="{{ asset('storage/'.$bread->image) }}" alt="gambar roti" width="60">
+                        @else
+                        <span>-</span>
+                        @endif
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ route('admin.breads.destroy', $bread) }}">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" onclick="return confirm('Hapus roti ini?')">Hapus</button>
+                        </form>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5">Belum ada data roti.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </section>
+
+</body>
+
+</html>

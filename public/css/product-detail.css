@@ -1,0 +1,205 @@
+/* ==========================================
+   PRODUCT DETAIL PAGE - Mayra D'Light
+   ========================================== */
+
+.btn-back{
+  display:inline-flex;
+  align-items:center;
+  gap:0.5rem;
+  padding:0.65rem 1rem;
+  background:#fff;
+  color:#666;
+  text-decoration:none;
+  border-radius:8px;
+  font-weight:500;
+  margin-bottom:1.5rem;
+  transition:all 0.3s ease;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
+
+.btn-back:hover{
+  background:#f8f8f8;
+  color:var(--accent);
+  transform:translateX(-4px);
+}
+
+.product-detail-wrapper{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:2.5rem;
+  background:#fff;
+  border-radius:12px;
+  padding:2rem;
+  box-shadow:0 4px 20px rgba(0,0,0,0.06);
+}
+
+@media(min-width:1024px){
+  .product-detail-wrapper{
+    grid-template-columns:1fr 1fr;
+    gap:3rem;
+  }
+}
+
+.product-image-section{
+  position:relative;
+}
+
+.product-main-image{
+  width:100%;
+  height:auto;
+  max-height:500px;
+  object-fit:cover;
+  border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.1);
+}
+
+.product-info-section{
+  display:flex;
+  flex-direction:column;
+  gap:1.5rem;
+}
+
+.product-title{
+  font-size:2rem;
+  font-weight:700;
+  margin:0;
+  color:#111;
+  line-height:1.2;
+}
+
+.product-price-section{
+  padding:1.25rem 0;
+  border-bottom:2px solid #f3f4f6;
+}
+
+.price-row{
+  display:flex;
+  align-items:baseline;
+  gap:1rem;
+}
+
+.price-current{
+  font-size:2rem;
+  font-weight:800;
+  color:var(--accent);
+}
+
+.product-description{
+  padding:1rem 0;
+}
+
+.product-description h3{
+  font-size:1.15rem;
+  margin:0 0 0.75rem;
+  color:#111;
+  font-weight:600;
+}
+
+.product-description p{
+  font-size:1rem;
+  line-height:1.7;
+  color:#555;
+  margin:0;
+}
+
+.product-meta{
+  display:flex;
+  gap:0.5rem;
+  font-size:0.95rem;
+  padding:0.75rem 0;
+}
+
+.meta-label{
+  font-weight:600;
+  color:#666;
+}
+
+.meta-value{
+  color:var(--accent);
+  font-weight:600;
+}
+
+.quantity-section{
+  padding:1rem 0;
+}
+
+.quantity-label{
+  font-weight:600;
+  font-size:1rem;
+  display:block;
+  margin-bottom:0.75rem;
+  color:#333;
+}
+
+.quantity-controls{
+  display:flex;
+  align-items:center;
+  gap:1rem;
+}
+
+.qty-btn{
+  width:45px;
+  height:45px;
+  border:2px solid #e5e7eb;
+  background:#fff;
+  border-radius:8px;
+  font-size:1.5rem;
+  font-weight:600;
+  color:#374151;
+  cursor:pointer;
+  transition:all 0.2s ease;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.qty-btn:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+  background:#fff9f0;
+  transform:scale(1.05);
+}
+
+#quantity{
+  border:none;
+  width:60px;
+  text-align:center;
+  font-size:1rem;
+  font-weight:600;
+  padding:0.5rem;
+  background:#fff;
+}
+
+.action-buttons{
+  display:flex;
+  gap:1rem;
+  margin-top:1rem;
+}
+
+.btn-cart{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0.75rem;
+  padding:1rem 1.5rem;
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  font-size:1rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.3s ease;
+  box-shadow:0 4px 12px rgba(180,83,9,0.3);
+}
+
+.btn-cart:hover{
+  background:#9a3d07;
+  transform:translateY(-2px);
+  box-shadow:0 6px 20px rgba(180,83,9,0.4);
+}
+
+.btn-cart:active{
+  transform:translateY(0);
+}

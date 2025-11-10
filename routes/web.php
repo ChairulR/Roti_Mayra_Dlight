@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FrontPageController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,26 +26,15 @@ Route::get('/', [FrontPageController::class, 'index'])->name('home');
 Route::get('/breads/{bread}', [FrontPageController::class, 'show'])->name('breads.show');
 Route::get('/about', [FrontPageController::class, 'about'])->name('about');
 
-/*
-|--------------------------------------------------------------------------
-| Admin Routes (Only for users with role `admin`)
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['admin'])->prefix('admin')->group(function () {
+//Cart
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add/{bread}', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
-    // Dashboard admin
-    Route::get('/', [AdminController::class, 'index'])->name('admin.dashboard');
-
-    // Tambah menu form
-    Route::get('/add-menu', [AdminController::class, 'addMenu'])->name('admin.addmenu');
-
-    // Kategori baru
-    Route::post('/categories', [AdminController::class, 'storeCategory'])->name('admin.categories.store');
-
-    // Bread CRUD
-    Route::get('/breads', [AdminController::class, 'breads'])->name('admin.breads.index');
-    Route::post('/breads', [AdminController::class, 'storeBread'])->name('admin.breads.store');
-    Route::get('/breads/{bread}/edit', [AdminController::class, 'editBread'])->name('admin.breads.edit');
-    Route::put('/breads/{bread}', [AdminController::class, 'updateBread'])->name('admin.breads.update');
-    Route::delete('/breads/{bread}', [AdminController::class, 'destroyBread'])->name('admin.breads.destroy');
-});
+//Admin
+Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+Route::post('/admin/categories', [AdminController::class, 'storeCategory'])->name('admin.categories.store');
+Route::post('/admin/breads', [AdminController::class, 'storeBread'])->name('admin.breads.store');
+Route::delete('/admin/breads/{bread}', [AdminController::class, 'destroyBread'])->name('admin.breads.destroy');
