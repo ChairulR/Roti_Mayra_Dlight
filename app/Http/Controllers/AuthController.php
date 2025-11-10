@@ -75,7 +75,7 @@ class AuthController extends Controller
 
             // Redirect berdasarkan role user
             if (Auth::user()->role === 'admin') {
-                return redirect()->intended('/admin')
+                return redirect()->route('admin.dashboard')
                     ->with('success', 'Welcome back, Admin!');
             }
 
@@ -161,7 +161,8 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login')
+        return redirect()
+            ->route('login')
             ->with('success', 'You have been logged out successfully.');
     }
 }
