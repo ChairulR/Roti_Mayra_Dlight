@@ -1,0 +1,68 @@
+/* ==========================================
+   SEARCH BAR - Mayra D'Light
+   ========================================== */
+
+.search-form{
+  position:relative;
+  display:flex;
+  gap:.5rem;
+  align-items:center;
+  margin:1rem 0;
+}
+
+.search-input{
+  flex:1;
+  padding:.85rem 1rem;
+  padding-left:3rem;
+  border-radius:12px;
+  border:2px solid #e6e6e6;
+  font-size:1rem;
+  transition:all 0.3s ease;
+  background:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+
+.search-input:focus{
+  outline:none;
+  border-color:var(--accent);
+  box-shadow:0 4px 16px rgba(180,83,9,0.15);
+  transform:translateY(-1px);
+}
+
+.search-input::placeholder{
+  color:#999;
+  font-weight:400;
+}
+
+.search-btn{
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  padding:.85rem 1.25rem;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+  transition:all 0.3s ease;
+  box-shadow:0 4px 12px rgba(180,83,9,0.25);
+}
+
+.search-btn:hover{
+  background:#9a3d07;
+  transform:translateY(-2px);
+  box-shadow:0 6px 20px rgba(180,83,9,0.35);
+}
+
+.search-btn:active{
+  transform:translateY(0);
+}
+
+.search-note{
+  font-size:.9rem;
+  color:var(--accent);
+  margin-top:.75rem;
+  padding:.5rem 1rem;
+  background:rgba(180,83,9,0.08);
+  border-radius:8px;
+  border-left:3px solid var(--accent);
+  animation:slideIn 0.3s ease;
+}
