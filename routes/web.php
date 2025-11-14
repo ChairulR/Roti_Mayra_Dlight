@@ -47,7 +47,6 @@ Route::delete('/admin/breads/{bread}', [AdminController::class, 'destroyBread'])
 	->name('admin.breads.destroy')
 	->middleware(AdminMiddleware::class);
 
-// Additional admin pages (views) — make sure admin can open add-menu, breads list, categories, and edit pages
 Route::get('/admin/add-menu', [AdminController::class, 'addMenu'])
 	->name('admin.addmenu')
 	->middleware(AdminMiddleware::class);
