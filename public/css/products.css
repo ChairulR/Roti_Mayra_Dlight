@@ -108,17 +108,6 @@
   box-shadow:0 6px 20px rgba(180,83,9,0.3);
 }
 
-/* Remove default link underlines inside product cards and keep color consistent */
-.card a{
-  text-decoration: none;
-  color: inherit;
-}
-
-.card a:hover{
-  text-decoration: underline; /* optional: subtle underline on hover for clarity */
-  color: var(--accent);
-}
-
 /* Catalog Table (Desktop View) */
 .catalog-table{
   width:100%;

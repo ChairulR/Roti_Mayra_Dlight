@@ -100,24 +100,3 @@
     display:none;
   }
 }
-
-/* Prominent logout button used in navbars and profile links */
-.btn-logout{
-  background:var(--accent);
-  color:#fff;
-  border:none;
-  padding:.35rem .7rem;
-  border-radius:999px;
-  font-weight:700;
-  cursor:pointer;
-  box-shadow:0 4px 12px rgba(150,60,10,0.12);
-  transition:all 0.18s ease;
-  margin-left:0.4rem;
-}
-.btn-logout:hover{
-  transform:translateY(-2px);
-  filter:brightness(.95);
-}
-.btn-logout:active{
-  transform:translateY(0);
-}

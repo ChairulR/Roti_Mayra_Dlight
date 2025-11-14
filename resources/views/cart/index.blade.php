@@ -13,23 +13,6 @@
             <nav class="nav-links">
                 <a href="{{ route('home') }}">Beranda</a>
                 <a href="{{ route('about') }}">Tentang</a>
-
-                @auth
-                    @if(auth()->user()->isAdmin())
-                        <a href="{{ route('admin.dashboard') }}">Admin</a>
-                    @endif
-
-                    <a href="{{ route('profile') }}">{{ auth()->user()->name }}</a>
-
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="btn-logout">Logout</button>
-                    </form>
-                @else
-                    <a href="{{ route('login') }}">Login</a>
-                    <a href="{{ route('register') }}">Register</a>
-                @endauth
-
                 <a href="{{ route('cart.index') }}" class="active">Keranjang</a>
             </nav>
         </div>
