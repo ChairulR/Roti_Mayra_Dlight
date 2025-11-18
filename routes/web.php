@@ -67,3 +67,18 @@ Route::get('/admin/breads/{id}/edit', [AdminController::class, 'editBread'])
 Route::put('/admin/breads/{id}', [AdminController::class, 'updateBread'])
 	->name('admin.breads.update')
 	->middleware(AdminMiddleware::class);
+
+// Admin routes — Admin mengatur banner
+	Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+		Route::resource('banners', \App\Http\Controllers\Admin\BannerController::class);
+	});
+
+	Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::resource('banners', \App\Http\Controllers\Admin\BannerController::class);
+    });
+
+
+		
