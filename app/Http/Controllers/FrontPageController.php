@@ -13,12 +13,22 @@ class FrontPageController extends Controller
     {
         // Controller sekarang hanya render view, data dihandle oleh Livewire component
         $categories = Schema::hasTable('categories') ? Category::all() : collect();
+        
+        // Get top rated products (minimum 1 rating)
+        $topRatedProducts = Bread::with(['ratings', 'category'])
+            ->whereHas('ratings')
+            ->get()
+            ->sortByDesc(function($bread) {
+                return $bread->averageRating();
+            })
+            ->take(6);
 
-        return view('frontpage', compact('categories'));
+        return view('frontpage', compact('categories', 'topRatedProducts'));
     }
 
     public function show(\App\Models\Bread $bread)
     {
+        $bread->load('ratings.user');
         return view('breads.show', compact('bread'));
     }
 

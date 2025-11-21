@@ -5,6 +5,7 @@ use App\Http\Controllers\FrontPageController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RatingController;
 
 
 
@@ -16,6 +17,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/', [FrontPageController::class, 'index'])->name('home');
 Route::get('/breads/{bread}', [FrontPageController::class, 'show'])->name('breads.show');
+Route::post('/breads/{bread}/rating', [RatingController::class, 'store'])->name('breads.rating')->middleware('auth');
 Route::get('/about', [FrontPageController::class, 'about'])->name('about');
 
 //Cart
@@ -24,6 +26,7 @@ Route::post('/cart/add/{bread}', [CartController::class, 'add'])->name('cart.add
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update')->middleware('auth');
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove')->middleware('auth');
 Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear')->middleware('auth');
+Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
 // Profile (requires auth)
 Route::get('/profile', [AuthController::class, 'profile'])->name('profile')->middleware('auth');

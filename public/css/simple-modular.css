@@ -14,6 +14,12 @@
 /* Hero Section */
 @import url('hero.css');
 
+/* Top Rated Products */
+@import url('top-rated.css');
+
+/* Rating System */
+@import url('rating.css');
+
 /* Search Bar */
 @import url('search.css');
 
