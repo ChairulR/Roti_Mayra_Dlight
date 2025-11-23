@@ -1,163 +1,114 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('admin.layouts.admin')
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Admin Dashboard — Mayra D'Light</title>
-    <link rel="stylesheet" href="{{ asset('css/simple-modular.css') }}">
-    <style>
-        body {
-            margin: 2rem;
-            font-family: sans-serif;
-            background: #f9f9f9;
-        }
+@section('content')
+<h1>Dashboard Admin</h1>
+<p style="margin-top:-10px; color:#7a5a3a;">Selamat datang di panel admin Mayra D'Light</p>
 
-        h1,
-        h2 {
-            margin-bottom: .5rem;
-        }
+{{-- Dropdown Filter Kategori --}}
+<div style="margin-top:25px; margin-bottom:20px;">
 
-        form {
-            margin-bottom: 2rem;
-        }
+    <form action="{{ route('admin.dashboard') }}" method="GET">
+        <label style="font-weight:bold; color:#7a4e2d;">Pilih Kategori</label><br>
 
-        input,
-        textarea,
-        select,
-        button {
-            padding: .5rem;
-            margin-top: .4rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+        <select name="category" onchange="this.form.submit()"
+            style="padding:10px; width:300px; border-radius:8px; border:1px solid #c49b66; margin-top:8px;">
 
-        button {
-            background: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
+            <option value="">-- Semua Kategori --</option>
 
-        button:hover {
-            background: #0056b3;
-        }
+            @foreach($categories as $cat)
+            <option value="{{ $cat->id }}"
+                {{ $selectedCategory == $cat->id ? 'selected' : '' }}>
+                {{ $cat->name }}
+            </option>
+            @endforeach
 
-        .table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 1rem;
-            background: white;
-        }
+        </select>
+    </form>
 
-        .table th,
-        .table td {
-            border: 1px solid #ccc;
-            padding: .5rem;
-            text-align: center;
-        }
+    {{-- Menampilkan kategori aktif --}}
+    @php
+    $activeCategory = $categories->firstWhere('id', $selectedCategory);
+    @endphp
 
-        .alert {
-            background: #def;
-            padding: .5rem;
-            margin-bottom: 1rem;
-            border-left: 4px solid #39f;
-        }
-
-        img {
-            border-radius: 5px;
-        }
-    </style>
-</head>
-
-<body>
-
-    <h1>Admin Dashboard</h1>
-
-    {{-- Notifikasi sukses --}}
-    @if(session('success'))
-    <div class="alert">{{ session('success') }}</div>
+    @if($selectedCategory && $activeCategory)
+    <p style="margin-top:10px; color:#7a5a3a;">
+        Menampilkan menu kategori:
+        <b>{{ $activeCategory->name }}</b>
+    </p>
+    @elseif($selectedCategory && !$activeCategory)
+    <p style="margin-top:10px; color:red;">
+        Kategori tidak ditemukan.
+    </p>
+    @else
+    <p style="margin-top:10px; color:#7a5a3a;">
+        Menampilkan semua menu roti
+    </p>
     @endif
-
-    {{-- Tambah Kategori --}}
-    <section>
-        <h2>Tambah Kategori</h2>
-        <form method="POST" action="{{ route('admin.categories.store') }}">
-            @csrf
-            <input type="text" name="name" placeholder="Nama kategori" required>
-            <button type="submit">Tambah</button>
-        </form>
-    </section>
-
-    {{-- Tambah Roti --}}
-    <section>
-        <h2>Tambah Roti</h2>
-        <form method="POST" action="{{ route('admin.breads.store') }}" enctype="multipart/form-data">
-            @csrf
-            <input type="text" name="name" placeholder="Nama roti" required><br>
-            <textarea name="description" placeholder="Deskripsi"></textarea><br>
-
-            {{-- Input harga berbentuk angka, bukan dropdown --}}
-            <input type="number" name="price" placeholder="Harga (Rp)" min="0" step="100" required><br>
-
-            <select name="category_id" required>
-                <option value="">-- Pilih Kategori --</option>
-                @foreach($categories as $cat)
-                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                @endforeach
-            </select><br>
-
-            <input type="file" name="image" accept="image/*"><br>
-            <button type="submit">Tambah Roti</button>
-        </form>
-    </section>
+</div>
 
 
-    {{-- Daftar Roti --}}
-    <section>
-        <h2>Daftar Roti</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Nama</th>
-                    <th>Deskripsi</th>
-                    <th>Kategori</th>
-                    <th>Harga</th>
-                    <th>Gambar</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($breads as $bread)
-                <tr>
-                    <td>{{ $bread->name }}</td>
-                    <td>{{ $bread->description ?? '-' }}</td>
-                    <td>{{ $bread->category->name ?? '-' }}</td>
-                    <td>Rp {{ number_format($bread->price, 0, ',', '.') }}</td>
-                    <td>
-                        @if($bread->image)
-                        <img src="{{ asset('storage/'.$bread->image) }}" alt="gambar roti" width="60">
-                        @else
-                        <span>-</span>
-                        @endif
-                    </td>
-                    <td>
-                        <form method="POST" action="{{ route('admin.breads.destroy', $bread) }}">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" onclick="return confirm('Hapus roti ini?')">Hapus</button>
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="5">Belum ada data roti.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </section>
+{{-- Statistik --}}
+<div style="display:flex; gap:20px; margin-top:20px;">
+    <div style="
+        background:#f8eee2; 
+        padding:15px 20px; 
+        border-radius:10px; 
+        border-left:5px solid #c49b66;
+        flex:1;">
+        <h3 style="margin:0; color:#7a4e2d;">Total Kategori</h3>
+        <p style="font-size:22px; font-weight:bold; margin:5px 0;">{{ $totalCategories }}</p>
+    </div>
 
-</body>
+    <div style="
+        background:#f8eee2; 
+        padding:15px 20px; 
+        border-radius:10px; 
+        border-left:5px solid #c49b66;
+        flex:1;">
+        <h3 style="margin:0; color:#7a4e2d;">Total Menu Roti</h3>
+        <p style="font-size:22px; font-weight:bold; margin:5px 0;">{{ $totalBreads }}</p>
+    </div>
+</div>
 
-</html>
+
+
+{{-- Daftar Menu --}}
+<h2 style="margin-top:40px;">Daftar Menu Roti</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Nama</th>
+            <th>Deskripsi</th>
+            <th>Kategori</th>
+            <th>Harga</th>
+            <th>Gambar</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse($breads as $bread)
+        <tr>
+            <td>{{ $bread->name }}</td>
+            <td style="width:300px;">{{ $bread->description }}</td>
+            <td>{{ $bread->category->name ?? '-' }}</td>
+            <td>Rp {{ number_format($bread->price, 0, ',', '.') }}</td>
+            <td>
+                @if($bread->image)
+                <img src="{{ asset('storage/' . $bread->image) }}" width="80" height="80" style="object-fit:cover;">
+                @else -
+                @endif
+            </td>
+        </tr>
+
+        {{-- Baris kosong seperti desain --}}
+        <tr>
+            <td colspan="5" style="height:35px; background:#fdf7f1;"></td>
+        </tr>
+
+        @empty
+        <tr>
+            <td colspan="5">Belum ada data roti.</td>
+        </tr>
+        @endforelse
+    </tbody>
+</table>
+@endsection

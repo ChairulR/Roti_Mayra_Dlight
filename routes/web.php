@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FrontPageController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\AuthController;
+use App\Http\Middleware\AdminMiddleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,8 +35,53 @@ Route::post('/cart/update', [CartController::class, 'update'])->name('cart.updat
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
-//Admin
-Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
-Route::post('/admin/categories', [AdminController::class, 'storeCategory'])->name('admin.categories.store');
-Route::post('/admin/breads', [AdminController::class, 'storeBread'])->name('admin.breads.store');
-Route::delete('/admin/breads/{bread}', [AdminController::class, 'destroyBread'])->name('admin.breads.destroy');
+// Profile (requires auth)
+Route::get('/profile', [AuthController::class, 'profile'])->name('profile')->middleware('auth');
+
+// Admin routes — protect with AdminMiddleware (ensures authenticated admin)
+Route::get('/admin', [AdminController::class, 'index'])
+	->name('admin.dashboard')
+	->middleware(AdminMiddleware::class);
+
+Route::post('/admin/categories', [AdminController::class, 'storeCategory'])
+	->name('admin.categories.store')
+	->middleware(AdminMiddleware::class);
+
+Route::post('/admin/breads', [AdminController::class, 'storeBread'])
+	->name('admin.breads.store')
+	->middleware(AdminMiddleware::class);
+
+Route::delete('/admin/breads/{bread}', [AdminController::class, 'destroyBread'])
+	->name('admin.breads.destroy')
+	->middleware(AdminMiddleware::class);
+
+// Additional admin pages (views) — make sure admin can open add-menu, breads list, categories, and edit pages
+Route::get('/admin/add-menu', [AdminController::class, 'addMenu'])
+	->name('admin.addmenu')
+	->middleware(AdminMiddleware::class);
+
+Route::get('/admin/breads', [AdminController::class, 'breads'])
+	->name('admin.breads.index')
+	->middleware(AdminMiddleware::class);
+
+Route::get('/admin/categories', [AdminController::class, 'categories'])
+	->name('admin.categories.index')
+	->middleware(AdminMiddleware::class);
+
+Route::get('/admin/breads/{id}/edit', [AdminController::class, 'editBread'])
+	->name('admin.breads.edit')
+	->middleware(AdminMiddleware::class);
+
+Route::put('/admin/breads/{id}', [AdminController::class, 'updateBread'])
+	->name('admin.breads.update')
+	->middleware(AdminMiddleware::class);
+
+//filttering manajemen menu
+Route::get('/admin/breads/filter', [AdminController::class, 'breads'])
+	->name('admin.breads.filter')
+	->middleware(AdminMiddleware::class);
+
+// Hapus kategori
+Route::delete('/admin/categories/{id}', [AdminController::class, 'deleteCategory'])
+	->name('admin.categories.delete')
+	->middleware(AdminMiddleware::class);
