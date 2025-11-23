@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Rating;
+use App\Models\Category;
 
 class Bread extends Model
 {
@@ -16,6 +17,10 @@ class Bread extends Model
         'price',
         'image',
         'category_id',
+        'is_promoted',
+    ];
+    protected $casts = [
+        'is_promoted' => 'boolean',
     ];
 
     public function category()

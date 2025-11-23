@@ -75,20 +75,15 @@ Route::put('/admin/breads/{id}', [AdminController::class, 'updateBread'])
 	->name('admin.breads.update')
 	->middleware(AdminMiddleware::class);
 
+Route::post('/admin/breads/{bread}/toggle-promoted', [AdminController::class, 'togglePromoted'])
+	->name('admin.breads.toggle_promoted')
+	->middleware(AdminMiddleware::class);
 // Admin routes — Admin mengatur banner
-	Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-		Route::resource('banners', \App\Http\Controllers\Admin\BannerController::class);
-	});
+Route::middleware([AdminMiddleware::class])
+	->prefix('admin')
+	->name('admin.')
+	->group(function () {});
 
-	Route::middleware(['auth', 'admin'])
-    ->prefix('admin')
-    ->name('admin.')
-    ->group(function () {
-        Route::resource('banners', \App\Http\Controllers\Admin\BannerController::class);
-    });
-
-
-		
 //filttering manajemen menu
 Route::get('/admin/breads/filter', [AdminController::class, 'breads'])
 	->name('admin.breads.filter')
