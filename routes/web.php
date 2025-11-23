@@ -5,6 +5,8 @@ use App\Http\Controllers\FrontPageController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RatingController;
+use App\Http\Middleware\AdminMiddleware;
 
 
 
@@ -35,7 +37,6 @@ Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.c
 Route::get('/profile', [AuthController::class, 'profile'])->name('profile')->middleware('auth');
 
 // Admin routes — protect with AdminMiddleware (ensures authenticated admin)
-use App\Http\Middleware\AdminMiddleware;
 
 Route::get('/admin', [AdminController::class, 'index'])
 	->name('admin.dashboard')

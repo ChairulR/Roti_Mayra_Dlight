@@ -150,47 +150,76 @@
                 </a>
                 @endforeach
             </div>
-        </header>
-        </header>
+        </section>
+        @endif
 
-    <!-- =======================
-      SLIDER IKLAN DINAMIS
-======================= -->
-<div class="swiper mySwiper" style="width:100%; height:300px; border-radius:12px; margin-bottom:40px; overflow:hidden;">
+        <!-- =======================
+          SLIDER IKLAN DINAMIS
+        ======================= -->
+        <div class="swiper mySwiper" style="width:100%; height:300px; border-radius:12px; margin-bottom:40px; overflow:hidden;">
 
-@php
-    $banners = \App\Models\Banner::all();
-@endphp
+        @php
+            $banners = \App\Models\Banner::all();
+        @endphp
 
-<div class="swiper-wrapper">
-    @foreach($banners as $b)
-        <div class="swiper-slide">
-            <img src="{{ asset('storage/' . $b->gambar) }}"
-                 style="width:100%; height:100%; object-fit:cover;">
+        <div class="swiper-wrapper">
+            @foreach($banners as $b)
+                <div class="swiper-slide">
+                    <img src="{{ asset('storage/' . $b->gambar) }}"
+                         style="width:100%; height:100%; object-fit:cover;">
+                </div>
+            @endforeach
         </div>
-    @endforeach
-</div>
 
-<!-- Navigasi -->
-<div class="swiper-button-next"></div>
-<div class="swiper-button-prev"></div>
-<div class="swiper-pagination"></div>
-</div>
-
-    <!-- ======================= -->
-
-    <section id="catalog">
-
-
-            <section id="catalog">
-                <h2>Katalog Roti</h2>
-
-                {{-- Livewire Search Component --}}
-                @livewire('livesearch')
-
-            </section>
-            </main>
+        <!-- Navigasi -->
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-pagination"></div>
         </div>
+
+        <!-- ======================= -->
+
+        <section id="catalog">
+            <h2>Katalog Roti</h2>
+
+            {{-- Livewire Search Component --}}
+            @livewire('livesearch')
+
+        </section>
+    </main>
+    
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        
+        function showSlide(n) {
+            if (n >= slides.length) currentSlideIndex = 0;
+            if (n < 0) currentSlideIndex = slides.length - 1;
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            slides[currentSlideIndex].classList.add('active');
+            dots[currentSlideIndex].classList.add('active');
+        }
+        
+        function changeSlide(n) {
+            currentSlideIndex += n;
+            showSlide(currentSlideIndex);
+        }
+        
+        function currentSlide(n) {
+            currentSlideIndex = n;
+            showSlide(currentSlideIndex);
+        }
+        
+        // Auto slide every 5 seconds
+        setInterval(() => {
+            currentSlideIndex++;
+            showSlide(currentSlideIndex);
+        }, 5000);
+    </script>
 
     @livewireScripts
     <script src="{{ asset('js/app.js') }}"></script>
