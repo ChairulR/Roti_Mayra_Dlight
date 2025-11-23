@@ -40,7 +40,7 @@
         </form>
     </section>
 
-    {{-- ✅ Daftar Roti --}}
+    {{-- ✅ Daftar Roti (Kolom Aksi dihilangkan) --}}
     <section class="table-section">
         <h2>Daftar Roti</h2>
         <table>
@@ -51,7 +51,7 @@
                     <th>Kategori</th>
                     <th>Harga</th>
                     <th>Gambar</th>
-                    <th>Aksi</th>
+                    {{-- <th>Aksi</th> dihilangkan --}}
                 </tr>
             </thead>
             <tbody>
@@ -68,17 +68,12 @@
                         -
                         @endif
                     </td>
-                    <td>
-                        <form action="{{ route('admin.breads.destroy', $bread) }}" method="POST" onsubmit="return confirm('Hapus roti ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="delete-btn">Hapus</button>
-                        </form>
-                    </td>
+                    {{-- Tombol Hapus dihilangkan --}}
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6">Belum ada data roti.</td>
+                    {{-- colspan diubah dari 6 menjadi 5 --}}
+                    <td colspan="5">Belum ada data roti.</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -86,7 +81,7 @@
     </section>
 </div>
 
-{{-- ✅ Script AJAX supaya kategori langsung muncul --}}
+{{-- ✅ Script AJAX supaya kategori langsung muncul (Tidak Berubah) --}}
 <script>
     document.getElementById('category-form').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -99,6 +94,7 @@
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
