@@ -7,6 +7,10 @@
     <title>Mayra D'Light — Toko Roti</title>
     <link rel="stylesheet" href="{{ asset('css/simple-modular.css') }}">
     @livewireStyles
+
+    <!-- Swiper Slider CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
 </head>
 
 <body>
@@ -54,19 +58,71 @@
                 <p><a class="cta" href="#catalog">Pilih Kategori</a></p>
             </div>
         </header>
+        </header>
 
-        <section id="catalog">
-            <h2>Katalog Roti</h2>
+    <!-- =======================
+      SLIDER IKLAN DINAMIS
+======================= -->
+<div class="swiper mySwiper" style="width:100%; height:300px; border-radius:12px; margin-bottom:40px; overflow:hidden;">
 
-            {{-- Livewire Search Component --}}
-            @livewire('livesearch')
+@php
+    $banners = \App\Models\Banner::all();
+@endphp
 
-        </section>
-        </main>
-    </div>
+<div class="swiper-wrapper">
+    @foreach($banners as $b)
+        <div class="swiper-slide">
+            <img src="{{ asset('storage/' . $b->gambar) }}"
+                 style="width:100%; height:100%; object-fit:cover;">
+        </div>
+    @endforeach
+</div>
+
+<!-- Navigasi -->
+<div class="swiper-button-next"></div>
+<div class="swiper-button-prev"></div>
+<div class="swiper-pagination"></div>
+</div>
+
+    <!-- ======================= -->
+
+    <section id="catalog">
+
+
+            <section id="catalog">
+                <h2>Katalog Roti</h2>
+
+                {{-- Livewire Search Component --}}
+                @livewire('livesearch')
+
+            </section>
+            </main>
+        </div>
 
     @livewireScripts
     <script src="{{ asset('js/app.js') }}"></script>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script>
+        var swiper = new Swiper(".mySwiper", {
+            loop: true,
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+        });
+    </script>
+
 </body>
 
 </html>
