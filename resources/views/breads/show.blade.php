@@ -105,6 +105,9 @@
                                             </div>
                                             <span class="review-date">{{ $r->created_at->diffForHumans() }}</span>
                                         </div>
+                                        @if($r->comment)
+                                            <p class="review-comment">{{ $r->comment }}</p>
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>
@@ -149,12 +152,31 @@
                                     <label for="star{{ $i }}" class="star-label" title="{{ $i }} bintang">★</label>
                                 @endfor
                             </div>
+                            
+                            <div class="comment-section">
+                                <label for="comment" class="comment-label">
+                                    <strong>Tulis Komentar Anda</strong>
+                                    <span class="optional-text">(Opsional)</span>
+                                </label>
+                                <textarea 
+                                    name="comment" 
+                                    id="comment" 
+                                    rows="4" 
+                                    maxlength="500"
+                                    class="comment-textarea"
+                                    placeholder="Bagikan pengalaman Anda tentang produk ini..."
+                                >{{ $userRating ? $userRating->comment : '' }}</textarea>
+                                <div class="comment-counter">
+                                    <span id="charCount">{{ $userRating && $userRating->comment ? strlen($userRating->comment) : 0 }}</span>/500 karakter
+                                </div>
+                            </div>
+
                             <div class="rating-submit">
                                 <button type="submit" class="btn-submit-rating">
                                     <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                     </svg>
-                                    Simpan Rating
+                                    Simpan Rating & Komentar
                                 </button>
                             </div>
                         </form>
@@ -252,6 +274,16 @@
                             label.style.animation = '';
                         }, 300);
                     });
+                });
+            }
+            
+            // Character counter for comment
+            const commentTextarea = document.getElementById('comment');
+            const charCount = document.getElementById('charCount');
+            
+            if (commentTextarea && charCount) {
+                commentTextarea.addEventListener('input', function() {
+                    charCount.textContent = this.value.length;
                 });
             }
         });
