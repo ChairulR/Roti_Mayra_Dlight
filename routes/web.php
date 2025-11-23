@@ -5,6 +5,7 @@ use App\Http\Controllers\FrontPageController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\AuthController;
+use App\Http\Middleware\AdminMiddleware;
 
 
 
@@ -20,6 +21,10 @@ Route::get('/about', [FrontPageController::class, 'about'])->name('about');
 
 //Cart
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add/{bread}', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 Route::post('/cart/add/{bread}', [CartController::class, 'add'])->name('cart.add')->middleware('auth');
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update')->middleware('auth');
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove')->middleware('auth');
@@ -66,4 +71,14 @@ Route::get('/admin/breads/{id}/edit', [AdminController::class, 'editBread'])
 
 Route::put('/admin/breads/{id}', [AdminController::class, 'updateBread'])
 	->name('admin.breads.update')
+	->middleware(AdminMiddleware::class);
+
+//filttering manajemen menu
+Route::get('/admin/breads/filter', [AdminController::class, 'breads'])
+	->name('admin.breads.filter')
+	->middleware(AdminMiddleware::class);
+
+// Hapus kategori
+Route::delete('/admin/categories/{id}', [AdminController::class, 'deleteCategory'])
+	->name('admin.categories.delete')
 	->middleware(AdminMiddleware::class);

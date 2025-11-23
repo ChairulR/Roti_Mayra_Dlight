@@ -1,211 +1,356 @@
-/* === Layout Umum === */
+/* === Layout Utama === */
 body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background-color: #f8f4ec;
-  display: flex;
-  min-height: 100vh;
-  color: #4a3b2d;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f4ec;
+    display: flex;
+    min-height: 100vh;
+    color: #4a3b2d;
 }
 
 /* === Sidebar === */
 .sidebar {
-  width: 220px;
-  background-color: #c49b66;
-  color: white;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
+    /* MENGAMBIL VERSI 597B295 */
+    width: 230px;
+    background: linear-gradient(180deg, #c49b66, #a97d45);
+    color: white;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    border-right: 2px solid rgba(255,255,255,0.2);
+    box-shadow: 2px 0 8px rgba(0,0,0,0.1);
 }
 
 .sidebar h2 {
-  text-align: center;
-  font-size: 20px;
-  margin-bottom: 20px;
+    font-size: 27px;
+    margin-bottom: 30px;
+    font-weight: 600;
+    text-shadow: 1px 1px rgba(0,0,0,0.1);
 }
 
 .menu-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .sidebar a {
-  color: white;
-  text-decoration: none;
-  padding: 0.6rem 0.9rem;
-  border-radius: 8px;
-  transition: 0.3s;
+    color: white;
+    text-decoration: none;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    font-size: 18px;
+    transition: 0.25s;
 }
 
 .sidebar a:hover,
 .sidebar a.active {
-  background-color: #b17e45;
+    background-color: rgba(255,255,255,0.2);
 }
 
-/* === Tombol Logout === */
+/* === Logout === */
 .logout-btn {
-  text-align: center;
-  margin-top: auto;
+    /* MENGAMBIL VERSI 597B295 */
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.3);
 }
 
 .logout-btn button {
-  width: 100%;
-  padding: 0.6rem;
-  background-color: #8a3b2f;
-  border-radius: 8px;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
+    width: 100%;
+    padding: 0.7rem;
+    background-color: #8a3b2f;
+    border-radius: 8px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.25s;
 }
 
 .logout-btn button:hover {
-  background-color: #6f2f24;
+    background-color: #6f2f24;
 }
 
-/* === Konten Utama === */
+/* === Main Content === */
 .main-content {
-  flex: 1;
-  padding: 2rem 3rem;
-  background-color: #fffaf4;
-  margin-left: 240px;
-  min-height: 100vh;
+    flex: 1;
+    padding: 2.2rem 3rem;
+    background-color: #fffaf4;
+    margin-left: 250px;
+    min-height: 100vh;
 }
 
 h1, h2 {
-  color: #7a4e2d;
-  margin-top: 0;
+    color: #7a4e2d;
+    margin-top: 0;
+    font-weight: 600;
 }
 
-/* === Tabel (kalau digunakan di Dashboard) === */
+/* === Tabel (Tetap) === */
 table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #ffffff;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 1rem;
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
 table th, table td {
-  padding: 0.8rem;
-  text-align: left;
-  border-bottom: 1px solid #e0d6c7;
+    padding: 0.9rem;
+    text-align: left;
+    border-bottom: 1px solid #e0d6c7;
 }
 
 table th {
-  background-color: #f1e3d3;
-  color: #5a3921;
+    background-color: #f1e3d3;
+    color: #5a3921;
+    font-weight: 600;
 }
 
+/* === Gambar (Tetap) === */
 img {
-  border-radius: 6px;
-  width: 80px;
+    border-radius: 10px;
+    width: 90px;
 }
 
-/* === Tombol Umum === */
+/* === Tombol Umum (Tetap) === */
 button {
-  background-color: #c49b66;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;
+    background-color: #c49b66;
+    color: white;
+    border: none;
+    padding: 0.55rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.25s;
+    font-weight: 500;
 }
 
 button:hover {
-  background-color: #b17e45;
+    background-color: #b17e45;
 }
 
-/* ====== MANAGE MENU ====== */
 
-.menu-wrapper {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+/* ==========================================================
+   🔥 GAYA CARD MENU BARU (MENGGANTIKAN CARD MENU GRID LAMA) 🔥
+========================================================== */
+
+/* Warna Kustom */
+.text-brown {
+    color: #8B5E3C;
 }
 
-.menu-card {
-    background: white;
-    border-radius: 10px;
-    border: 1px solid #f0d9b5;
-    padding: 15px;
-    text-align: center;
-    box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
-}
-
-.menu-card img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 10px;
-}
-
-.price {
-    font-weight: bold;
-    color: #c47a2c;
-    margin: 5px 0;
-}
-
-.btn-group {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.btn-edit {
-    background: #ffc107;
-    padding: 6px 12px;
-    border-radius: 6px;
-    color: #000;
-}
-
-.btn-delete {
-    background: #dc3545;
-    padding: 6px 12px;
-    border-radius: 6px;
+.btn-brown {
+    background-color: #8B5E3C;
     color: white;
-    border: none;
 }
 
-/* === Add Menu Page === */
+.btn-brown:hover {
+    background-color: #714a2f;
+    color: white;
+}
+
+/* --- Kategori Box Baru --- */
+.category-box {
+    background: #fff5e6;
+    border: 1px solid #e7d2b8;
+}
+
+.category-item {
+    background: #fdf2dd;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    /* Mengganti display flex lama dengan yang baru */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.category-item button {
+    padding: 4px 10px;
+    font-size: 15px;
+}
+
+/* =========================================
+   FIX GRID CARD — agar benar-benar 3 kolom (Penting untuk Bootstrap)
+========================================== */
+.menu-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.menu-row>.col-md-4 {
+    flex: 0 0 33.333%;
+    max-width: 33.333%;
+    display: flex;
+    /* penting agar semua card sama tinggi */
+}
+
+/* --- Card Menu Baru --- */
+.menu-card {
+    border-radius: 12px;
+    width: 100%;
+    height: 100%; /* Agar semua card di .col-md-4 sama tinggi */
+    transition: 0.25s;
+}
+
+.menu-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.menu-img {
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+}
+
+/* ================================
+   FIX DESKRIPSI agar tidak keluar
+================================= */
+.menu-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 55px; /* tinggi konsisten */
+}
+
+
+/* === Add Menu Page (Tetap) === */
 .container {
-  max-width: 900px;
-  margin: 0 auto;
+    max-width: 1100px;
+    margin: 0 auto;
 }
 
 .form-section {
-  background-color: #fffaf4;
-  border: 1px solid #e1c9a9;
-  border-radius: 10px;
-  padding: 1rem 1.5rem;
-  margin-bottom: 1.5rem;
+    background-color: #fffaf4;
+    border: 1px solid #e1c9a9;
+    border-radius: 12px;
+    padding: 1.3rem 1.8rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .form-section form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
 }
 
 .form-section input,
 .form-section textarea,
 .form-section select {
-  flex: 1 1 200px;
-  padding: 0.5rem;
-  border: 1px solid #d1b894;
-  border-radius: 6px;
+    flex: 1 1 350px;
+    padding: 0.55rem;
+    border: 1px solid #bb9f79;
+    border-radius: 8px;
+    font-size: 15px;
+    background: #fff;
+}
+
+textarea {
+    min-height: 110px;
+    resize: vertical;
 }
 
 .table-section table {
-  margin-top: 1rem;
+    margin-top: 1rem;
+}
+
+/* =================================
+   Gaya Kustom Card dan Kategori
+================================= */
+
+/* Warna Coklat */
+.text-brown {
+    color: #8B5E3C;
+}
+
+.btn-brown {
+    background-color: #8B5E3C;
+    color: white;
+}
+
+.btn-brown:hover {
+    background-color: #714a2f;
+    color: white;
+}
+
+/* --- Kategori Box --- */
+.category-box {
+    background: #a08b6b;
+    border: 1px solid #e7d2b8;
+}
+
+.category-item {
+    background: #fdf2dd;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.category-item button {
+    padding: 4px 10px;
+    font-size: 15px;
+}
+
+/* =========================================
+   FIX GRID CARD — agar benar-benar 3 kolom
+========================================== */
+.menu-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.menu-row>.col-md-4 {
+    flex: 0 0 33.333%;
+    max-width: 33.333%;
+    display: flex;
+    /* penting agar semua card sama tinggi */
+}
+
+/* --- Card Menu --- */
+.menu-card {
+    border-radius: 12px;
+    width: 100%;
+    height: 100%;
+    transition: 0.25s;
+}
+
+.menu-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.menu-img {
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+}
+
+/* ================================
+   FIX DESKRIPSI agar tidak keluar
+================================= */
+.menu-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 55px;
+    /* tinggi konsisten */
 }

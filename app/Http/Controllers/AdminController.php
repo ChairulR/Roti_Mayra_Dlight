@@ -12,35 +12,48 @@ class AdminController extends Controller
     /**
      * Dashboard utama admin
      */
-    public function index()
+    public function index(Request $request)
     {
         $categories = Category::all();
-        $breads = Bread::with('category')->get();
-        return view('admin.dashboard', compact('categories', 'breads'));
+        $selectedCategory = $request->category ?? null;
+
+        // Filtering roti berdasarkan kategori
+        $breads = Bread::with('category')
+            ->when($selectedCategory, fn($q) => $q->where('category_id', $selectedCategory))
+            ->get();
+
+        return view('admin.dashboard', [
+            'categories'        => $categories,
+            'breads'            => $breads,
+            'selectedCategory'  => $selectedCategory,
+            'totalCategories'   => $categories->count(),
+            'totalBreads'       => Bread::count(),
+        ]);
     }
 
     /**
-     * Add Menu Page
+     * Halaman Add Menu
      */
     public function addMenu()
     {
-        $categories = Category::all();
-        $breads = Bread::all();
-
-        return view('admin.add-menu', compact('categories', 'breads'));
+        return view('admin.add-menu', [
+            'categories' => Category::all(),
+            'breads'     => Bread::all(),
+        ]);
     }
 
     /**
-     * Manajemen kategori
+     * Halaman daftar kategori
      */
     public function categories()
     {
-        $categories = Category::all();
-        return view('admin.categories', compact('categories'));
+        return view('admin.categories', [
+            'categories' => Category::all()
+        ]);
     }
 
     /**
-     * Simpan kategori baru
+     * Tambah kategori baru
      */
     public function storeCategory(Request $request)
     {
@@ -48,48 +61,65 @@ class AdminController extends Controller
             'name' => 'required|string|max:100'
         ]);
 
-        $category = Category::create([
-            'name' => $validated['name']
-        ]);
+        $category = Category::create($validated);
 
         if ($request->ajax()) {
             return response()->json([
-                'success' => true,
-                'message' => 'Kategori berhasil ditambahkan.',
-                'category' => $category
+                'success'   => true,
+                'message'   => 'Kategori berhasil ditambahkan.',
+                'category'  => $category
             ]);
         }
 
-        return redirect()->back()->with('success', 'Kategori berhasil ditambahkan.');
+        return back()->with('success', 'Kategori berhasil ditambahkan.');
     }
 
     /**
-     * ✅ Halaman Manajemen Roti (Grid Card + Pencarian)
+     * Hapus kategori
+     */
+    public function deleteCategory($id)
+    {
+        $category = Category::findOrFail($id);
+
+        // Opsional: hapus semua roti yang memiliki kategori ini
+        // Bread::where('category_id', $id)->delete();
+
+        $category->delete();
+
+        return back()->with('success', 'Kategori berhasil dihapus.');
+    }
+
+    /**
+     * Halaman manajemen roti (dengan filter kategori)
      */
     public function breads(Request $request)
     {
-        $search = $request->search;
+        $categories = Category::all();
+        $selectedCategory = $request->category ?? null;
 
         $breads = Bread::with('category')
-            ->when($search, function ($query, $search) {
-                $query->where('name', 'LIKE', "%{$search}%");
+            ->when($selectedCategory, function ($q) use ($selectedCategory) {
+                $q->where('category_id', $selectedCategory);
+            })
+            ->when($request->search, function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%');
             })
             ->get();
 
-        return view('admin.breads.index', compact('breads', 'search'));
+        return view('admin.breads', compact('breads', 'categories', 'selectedCategory'));
     }
 
     /**
-     * ✅ Simpan roti baru
+     * Simpan roti baru
      */
     public function storeBread(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric',
-            'category_id' => 'nullable|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+            'name'          => 'required|string|max:255',
+            'description'   => 'nullable|string',
+            'price'         => 'required|numeric',
+            'category_id'   => 'nullable|exists:categories,id',
+            'image'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
         $data = $request->only(['name', 'description', 'price', 'category_id']);
@@ -100,11 +130,11 @@ class AdminController extends Controller
 
         Bread::create($data);
 
-        return redirect()->back()->with('success', 'Roti berhasil ditambahkan.');
+        return back()->with('success', 'Roti berhasil ditambahkan.');
     }
 
     /**
-     * ✅ Hapus roti
+     * Hapus roti
      */
     public function destroyBread(Bread $bread)
     {
@@ -114,46 +144,48 @@ class AdminController extends Controller
 
         $bread->delete();
 
-        return redirect()->back()->with('success', 'Roti berhasil dihapus.');
+        return back()->with('success', 'Roti berhasil dihapus.');
     }
 
     /**
-     * ✅ Halaman Edit Roti
+     * Halaman edit roti
      */
     public function editBread($id)
     {
-        $bread = Bread::findOrFail($id);
-        $categories = Category::all();
-
-        return view('admin.edit-bread', compact('bread', 'categories'));
+        return view('admin.edit-bread', [
+            'bread'      => Bread::findOrFail($id),
+            'categories' => Category::all()
+        ]);
     }
 
     /**
-     * ✅ Update Roti
+     * Update roti
      */
     public function updateBread(Request $request, $id)
     {
         $bread = Bread::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'category_id' => 'nullable|exists:categories,id',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'name'          => 'required|string|max:255',
+            'description'   => 'nullable|string',
+            'price'         => 'required|numeric',
+            'category_id'   => 'nullable|exists:categories,id',
+            'image'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
-        $data = $request->only(['name', 'price', 'category_id', 'description']);
+        $data = $request->only(['name', 'price', 'description', 'category_id']);
 
         if ($request->hasFile('image')) {
             if ($bread->image && Storage::disk('public')->exists($bread->image)) {
                 Storage::disk('public')->delete($bread->image);
             }
+
             $data['image'] = $request->file('image')->store('breads', 'public');
         }
 
         $bread->update($data);
 
-        return redirect()->route('admin.breads.index')->with('success', 'Data roti berhasil diperbarui!');
+        return redirect()->route('admin.breads.index')
+            ->with('success', 'Data roti berhasil diperbarui!');
     }
 }
