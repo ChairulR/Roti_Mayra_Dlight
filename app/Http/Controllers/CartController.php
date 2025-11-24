@@ -74,4 +74,60 @@ class CartController extends Controller
         session()->forget('cart');
         return redirect()->back()->with('success', 'Keranjang dikosongkan!');
     }
+
+    public function checkout()
+    {
+        $cart = session()->get('cart', []);
+        
+        if(empty($cart)) {
+            return redirect()->route('cart.index')->with('error', 'Keranjang kosong!');
+        }
+
+        $user = auth()->user();
+        $userName = $user ? $user->name : 'Guest';
+        
+        // Build WhatsApp message
+        $message = " *MAYRA D'LIGHT BAKERY* \n";
+        $message .= "═══════════════════════\n\n";
+        $message .= " *Orderan Baru Masuk!* \n\n";
+        $message .= "╔═══════════════════════\n";
+        $message .= "║  Customer: *{$userName}*\n";
+        $message .= "║  " . now()->format('d M Y, H:i') . "\n";
+        $message .= "╚═══════════════════════\n\n";
+        $message .= " *RINCIAN PESANAN:*\n";
+        $message .= "─────────────────────────\n";
+        
+        $total = 0;
+        $itemNumber = 1;
+        foreach($cart as $item) {
+            $subtotal = $item['price'] * $item['quantity'];
+            $total += $subtotal;
+            
+            $message .= "\n Item #{$itemNumber}\n";
+            $message .= " Produk: *{$item['name']}*\n";
+            $message .= " Jumlah: {$item['quantity']} pcs\n";
+            $message .= " Harga Satuan: Rp " . number_format($item['price'], 0, ',', '.') . "\n";
+            $message .= " Subtotal: *Rp " . number_format($subtotal, 0, ',', '.') . "*\n";
+            $message .= "─────────────────────────";
+            
+            $itemNumber++;
+        }
+        
+        $message .= "\n\n🧾 *TOTAL PEMBAYARAN*\n";
+        $message .= "*Rp " . number_format($total, 0, ',', '.') . "*\n\n";
+        $message .= "═══════════════════════\n";
+        $message .= "Terima kasih telah berbelanja! \n";
+        $message .= "_Mohon konfirmasi pesanan ini_ ";
+        
+        // Change this to your business WhatsApp number
+        $waNumber = env('WHATSAPP_NUMBER');
+        
+        // URL encode the message
+        $encodedMessage = urlencode($message);
+        
+        // WhatsApp API URL
+        $waUrl = "https://wa.me/{$waNumber}?text={$encodedMessage}";
+        
+        return redirect($waUrl);
+    }
 }

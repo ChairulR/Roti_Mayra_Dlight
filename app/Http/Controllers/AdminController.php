@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bread;
 use App\Models\Category;
+use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -22,12 +23,29 @@ class AdminController extends Controller
             ->when($selectedCategory, fn($q) => $q->where('category_id', $selectedCategory))
             ->get();
 
+        // ====================================
+        // 🔥 LOGIKA NOTIFIKASI RATING BARU 🔥
+        // ====================================
+        // Ambil 10 Rating/Komentar terbaru untuk Menu Roti
+        $latestRatings = Rating::where('rateable_type', Bread::class)
+            ->with('user', 'rateable') // Eager load user (pelanggan) dan rateable (Bread)
+            ->orderBy('created_at', 'desc') // Diurutkan dari yang terbaru
+            ->limit(10) // Hanya ambil 10 data
+            ->get();
+
+        // Hitung total Rating/Komentar untuk badge notifikasi
+        // Catatan: Jika Anda memiliki kolom 'is_read', ganti count() dengan ->where('is_read', 0)->count()
+        $newRatingsCount = Rating::where('rateable_type', Bread::class)
+            ->count();
+
         return view('admin.dashboard', [
             'categories'        => $categories,
             'breads'            => $breads,
             'selectedCategory'  => $selectedCategory,
             'totalCategories'   => $categories->count(),
             'totalBreads'       => Bread::count(),
+            'latestRatings' => $latestRatings,
+            'newRatingsCount' => $newRatingsCount,
         ]);
     }
 
@@ -187,5 +205,53 @@ class AdminController extends Controller
 
         return redirect()->route('admin.breads.index')
             ->with('success', 'Data roti berhasil diperbarui!');
+    }
+
+    public function togglePromoted(Bread $bread)
+    {
+        // 1. Inisialisasi dan hitung status
+        $maxPromoted = 3;
+        // Hitung menu yang sedang dipromosikan
+        $currentPromotedCount = Bread::where('is_promoted', true)->count();
+        $isCurrentlyPromoted = $bread->is_promoted;
+
+        // 2. Jika statusnya akan diaktifkan (FALSE -> TRUE)
+        if (!$isCurrentlyPromoted) {
+
+            // Cek batas maksimum
+            if ($currentPromotedCount >= $maxPromoted) {
+                // Kuota penuh, kirim respon error (400)
+                return response()->json([
+                    'success' => false,
+                    'is_promoted' => false,
+                    'count' => $currentPromotedCount,
+                    'message' => 'Gagal: Batas maksimum ' . $maxPromoted . ' menu promosi sudah tercapai.',
+                ], 400);
+            }
+
+            // Aktifkan promosi
+            $bread->is_promoted = true;
+            $bread->save();
+
+            return response()->json([
+                'success' => true,
+                'is_promoted' => true,
+                'count' => $currentPromotedCount + 1,
+                'message' => $bread->name . ' berhasil dipromosikan.',
+            ]);
+        }
+
+        // 3. Jika statusnya akan dinonaktifkan (TRUE -> FALSE)
+        else {
+            $bread->is_promoted = false;
+            $bread->save();
+
+            return response()->json([
+                'success' => true,
+                'is_promoted' => false,
+                'count' => $currentPromotedCount - 1,
+                'message' => $bread->name . ' promosi telah dimatikan.',
+            ]);
+        }
     }
 }

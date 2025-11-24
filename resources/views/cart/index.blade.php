@@ -98,7 +98,10 @@
                         <span>Total Harga</span>
                         <span class="total-price">Rp {{ number_format($total, 0, ',', '.') }}</span>
                     </div>
-                    <button class="btn-checkout">Checkout</button>
+                    <form action="{{ route('cart.checkout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn-checkout">Checkout via WhatsApp</button>
+                    </form>
                     <form action="{{ route('cart.clear') }}" method="POST" style="margin-top: 1rem;">
                         @csrf
                         <button type="submit" class="btn-clear" onclick="return confirm('Yakin ingin mengosongkan keranjang?')">Kosongkan Keranjang</button>

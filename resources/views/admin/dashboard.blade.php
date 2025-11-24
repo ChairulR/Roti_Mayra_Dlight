@@ -1,239 +1,192 @@
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Admin Dashboard — Mayra D'Light</title>
-    <link rel="stylesheet" href="{{ asset('css/simple-modular.css') }}">
-    <style>
-        /* === Layout Umum === */
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background-color: #f8f4ec;
-  display: flex;
-  min-height: 100vh;
-  color: #4a3b2d;
-}
-
-/* === Sidebar === */
-.sidebar {
-  width: 220px;
-  background-color: #c49b66;
-  color: white;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-}
-
-.sidebar h2 {
-  text-align: center;
-  font-size: 20px;
-  margin-bottom: 20px;
-}
-
-.menu-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.sidebar a {
-  color: white;
-  text-decoration: none;
-  padding: 0.6rem 0.9rem;
-  border-radius: 8px;
-  transition: 0.3s;
-}
-
-.sidebar a:hover,
-.sidebar a.active {
-  background-color: #b17e45;
-}
-
-/* === Tombol Logout === */
-.logout-btn {
-  text-align: center;
-  margin-top: auto;
-}
-
-.logout-btn button {
-  width: 100%;
-  padding: 0.6rem;
-  background-color: #8a3b2f;
-  border-radius: 8px;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.logout-btn button:hover {
-  background-color: #6f2f24;
-}
-
-/* === Konten Utama === */
-.main-content {
-  flex: 1;
-  padding: 2rem 3rem;
-  background-color: #fffaf4;
-  margin-left: 240px;
-  min-height: 100vh;
-}
-
-h1, h2 {
-  color: #7a4e2d;
-  margin-top: 0;
-}
-
-/* === Tabel (kalau digunakan di Dashboard) === */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #ffffff;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 1rem;
-}
-
-table th, table td {
-  padding: 0.8rem;
-  text-align: left;
-  border-bottom: 1px solid #e0d6c7;
-}
-
-table th {
-  background-color: #f1e3d3;
-  color: #5a3921;
-}
-
-img {
-  border-radius: 6px;
-  width: 80px;
-}
-
-/* === Tombol Umum === */
-button {
-  background-color: #c49b66;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-button:hover {
-  background-color: #b17e45;
-}
-
-/* ====== MANAGE MENU ====== */
-
-.menu-wrapper {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-}
-
-.menu-card {
-    background: white;
-    border-radius: 10px;
-    border: 1px solid #f0d9b5;
-    padding: 15px;
-    text-align: center;
-    box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
-}
-
-.menu-card img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 10px;
-}
-
-.price {
-    font-weight: bold;
-    color: #c47a2c;
-    margin: 5px 0;
-}
-
-.btn-group {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.btn-edit {
-    background: #ffc107;
-    padding: 6px 12px;
-    border-radius: 6px;
-    color: #000;
-}
-
-.btn-delete {
-    background: #dc3545;
-    padding: 6px 12px;
-    border-radius: 6px;
-    color: white;
-    border: none;
-}
-
-/* === Add Menu Page === */
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.form-section {
-  background-color: #fffaf4;
-  border: 1px solid #e1c9a9;
-  border-radius: 10px;
-  padding: 1rem 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.form-section form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-}
-
-.form-section input,
-.form-section textarea,
-.form-section select {
-  flex: 1 1 200px;
-  padding: 0.5rem;
-  border: 1px solid #d1b894;
-  border-radius: 6px;
-}
-
-.table-section table {
-  margin-top: 1rem;
-}
-
-    </style>
-</head>
-
-<body>
-
-    <h1>Admin Dashboard</h1>
-
-    {{-- Notifikasi sukses --}}
-    @if(session('success'))
-    <div class="alert">{{ session('success') }}</div>
 @extends('admin.layouts.admin')
 
 @section('content')
-<h1>Dashboard Admin</h1>
-<p style="margin-top:-10px; color:#7a5a3a;">Selamat datang di panel admin Mayra D'Light</p>
+
+{{-- ======================================= --}}
+{{-- 🔥 STYLES DAN SCRIPT UNTUK NOTIFIKASI (Diposisikan di atas untuk loading) 🔥 --}}
+{{-- ======================================= --}}
+<style>
+    /* --- Penataan Umum Header --- */
+    .dashboard-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .header-title p {
+        margin-top: -10px;
+        color: #7a5a3a;
+    }
+
+    /* --- Styling Notifikasi --- */
+    .notification-container {
+        position: relative;
+        margin-left: auto;
+        /* Mendorong ke kanan */
+        flex-shrink: 0;
+        align-self: flex-start;
+        padding-top: 15px;
+        /* Sesuaikan agar sejajar dengan h1 */
+    }
+
+    .notification-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 24px;
+        color: #7a4e2d;
+        /* Warna cokelat */
+        position: relative;
+    }
+
+    /* Bintang Lonceng yang awalnya dikirim dobel, sekarang hanya ikon */
+    .notification-btn i.fa-bell {
+        font-size: 24px;
+    }
+
+    .notification-btn:hover {
+        color: #5d442c;
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: 5px;
+        right: -5px;
+        background-color: #e63946;
+        /* Merah */
+        color: white;
+        font-size: 10px;
+        padding: 3px 6px;
+        border-radius: 50%;
+        line-height: 1;
+        transform: translate(0, -50%);
+    }
+
+    .notification-dropdown {
+        display: none;
+        /* Awalnya tersembunyi */
+        position: absolute;
+        top: 45px;
+        /* Jarak dari tombol */
+        right: 0;
+        width: 320px;
+        background: white;
+        border: 1px solid #e0d6c7;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .notification-dropdown.active {
+        display: block;
+        /* Tampilkan saat aktif */
+    }
+
+    .notification-dropdown h6 {
+        padding: 10px;
+        margin: 0;
+        border-bottom: 1px solid #e0d6c7;
+        color: #7a4e2d;
+    }
+
+    .notification-item {
+        padding: 10px 15px;
+        border-bottom: 1px solid #f1f1f1;
+    }
+
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+
+    .notification-item:hover {
+        background-color: #fdf7f1;
+    }
+
+    .notification-item p {
+        margin: 3px 0;
+        font-size: 14px;
+    }
+
+    .notification-item .user-name {
+        font-weight: bold;
+    }
+
+    .star-filled {
+        color: #FFD700;
+    }
+
+    .star-empty {
+        color: #d1d1d1;
+    }
+
+    .comment-text {
+        font-style: italic;
+        font-size: 14px;
+    }
+</style>
+
+{{-- CONTAINER JUDUL & NOTIFIKASI --}}
+<div class="dashboard-header">
+
+    {{-- Judul dan Sambutan (Aligned Left) --}}
+    <div style="flex-shrink: 0;" class="header-title">
+        <h1>Dashboard Admin</h1>
+        <p>Selamat datang di panel admin Mayra D'Light</p>
+    </div>
+
+    {{-- 🔥 WADAH NOTIFIKASI BARU (Pushed to Right menggunakan margin-left: auto pada CSS) 🔥 --}}
+    <div class="notification-container">
+
+        {{-- Tombol Notifikasi --}}
+        <button class="notification-btn" id="notification-toggle">
+            <i class="fas fa-bell"></i>
+
+            {{-- Badge, muncul hanya jika ada rating baru (Menggunakan $newRatingsCount) --}}
+            @if (isset($newRatingsCount) && $newRatingsCount > 0)
+            <span class="notification-badge">{{ $newRatingsCount }}</span>
+            @endif
+        </button>
+
+        {{-- Dropdown Notifikasi --}}
+        <div class="notification-dropdown" id="notification-dropdown">
+            <h6>Notifikasi Rating ({{ $latestRatings->count() ?? 0 }})</h6>
+
+            {{-- Loop untuk menampilkan 10 rating terbaru --}}
+            @forelse ($latestRatings as $rating)
+            <div class="notification-item">
+                <p class="user-name">Dari: {{ $rating->user->name ?? 'Pengguna' }}</p>
+
+                {{-- Menampilkan Nama Menu Roti dari Relasi Polymorphic rateable --}}
+                @php
+                $breadName = 'Menu Roti';
+                if ($rating->rateable_type === App\Models\Bread::class && $rating->rateable) {
+                $breadName = $rating->rateable->name;
+                }
+                @endphp
+                <p>Menu: {{ $breadName }}</p>
+
+                {{-- Tampilkan rating dengan bintang --}}
+                <p>
+                    Rating:
+                    @for ($i = 0; $i < 5; $i++)
+                        <span class="{{ $i < $rating->rating ? 'star-filled' : 'star-empty' }}">★</span>
+                        @endfor
+                </p>
+
+                <p class="comment-text">"{{ Str::limit($rating->comment, 50) }}"</p>
+            </div>
+            @empty
+            <div class="notification-item">
+                <p style="margin:0;">Tidak ada rating baru.</p>
+            </div>
+            @endforelse
+        </div>
+    </div>
+
+</div>
+
 
 {{-- Dropdown Filter Kategori --}}
 <div style="margin-top:25px; margin-bottom:20px;">
@@ -342,4 +295,30 @@ button:hover {
         @endforelse
     </tbody>
 </table>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleButton = document.getElementById('notification-toggle');
+        const dropdown = document.getElementById('notification-dropdown');
+
+        // Fungsi untuk menampilkan/menyembunyikan dropdown
+        toggleButton.addEventListener('click', function(event) {
+            event.stopPropagation();
+            dropdown.classList.toggle('active');
+        });
+
+        // Menutup dropdown jika klik di luar area notifikasi
+        document.addEventListener('click', function(event) {
+            if (!dropdown.contains(event.target) && !toggleButton.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Mencegah dropdown tertutup saat mengklik di dalamnya
+        dropdown.addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    });
+</script>
+
 @endsection

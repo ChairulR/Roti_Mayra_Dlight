@@ -35,6 +35,37 @@
 
     </div>
 
+    {{-- KOTAK PENGATURAN ADS ADMIN --}}
+    <div class="p-3 mb-4 rounded" style="border: 2px solid #c49b66; background: #fff8f0;">
+        <h5 class="fw-bold text-brown mb-3">⭐ Pengaturan Menu Promosi (Maks. 3 Ads)</h5>
+
+        @php
+        // Ambil menu yang sedang dipromosikan.
+        // (Asumsi: Anda mungkin perlu memuat ulang data ini dari DB di Controller jika $breads hanya berisi hasil filter)
+        // Untuk memastikan keakuratan, kita panggil Model di sini (meskipun lebih baik di Controller)
+        $promotedBreads = \App\Models\Bread::where('is_promoted', true)->limit(3)->get();
+        @endphp
+
+        @forelse ($promotedBreads as $pBread)
+        <div class="d-flex align-items-center mb-2 p-2 border rounded" style="background: #f8eee2;">
+            @if ($pBread->image)
+            <img src="{{ asset('storage/' . $pBread->image) }}" alt="{{ $pBread->name }}" width="40" height="40" style="object-fit: cover; border-radius: 4px;" class="me-3">
+            @else
+            <div class="me-3" style="width: 40px; height: 40px; background: #ddd; border-radius: 4px;"></div>
+            @endif
+            <span class="fw-bold text-success me-auto">{{ $pBread->name }}</span>
+            <span class="badge bg-warning text-dark me-2">AD #{{ $loop->iteration }}</span>
+            <a href="{{ route('admin.breads.edit', $pBread->id) }}" class="btn btn-sm btn-brown text-white">Edit</a>
+        </div>
+        @empty
+        <p class="text-secondary mb-0">Belum ada menu yang dipromosikan. Silakan klik ikon hati pada menu di bawah untuk menjadikannya iklan.</p>
+        @endforelse
+
+        @if($promotedBreads->count() >= 3)
+        <p class="text-danger mt-2 mb-0" style="font-size: small;">* Batas maksimum 3 menu promosi sudah tercapai.</p>
+        @endif
+    </div>
+
     {{-- ===========================
         LIST KATEGORI
     ============================ --}}
@@ -75,6 +106,16 @@
                     class="card-img-top menu-img"
                     alt="{{ $bread->name }}">
                 @endif
+
+                {{-- TOMBOL TOGGLE PROMOSI --}}
+                <button type="button"
+                    class="btn btn-sm promoted-toggle-btn {{ $bread->is_promoted ? 'btn-danger' : 'btn-outline-danger' }}"
+                    data-bread-id="{{ $bread->id }}"
+                    data-url="{{ route('admin.breads.toggle_promoted', $bread->id) }}"
+                    title="Toggle Promosi"
+                    style="position: absolute; top: 10px; right: 10px; z-index: 10; border-radius: 50%; width: 40px; height: 40px; padding: 0;">
+                    <i class="{{ $bread->is_promoted ? 'fas fa-heart' : 'far fa-heart' }}"></i>
+                </button>
 
                 <div class="card-body">
 
@@ -176,7 +217,7 @@
     }
 
     /* ================================
-       FIX DESKRIPSI agar tidak keluar
+       deskripsi agar tidak keluar dari card
     ================================= */
     .menu-description {
         display: -webkit-box;
@@ -203,4 +244,54 @@
     }
 </style>
 
+@endsection
+
+{{-- SKRIP AJAX ADS --}}
+@section('script')
+{{-- Pastikan jQuery sudah dimuat di layout admin Anda (admin.layouts.admin) --}}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+        $('.promoted-toggle-btn').on('click', function() {
+            const $button = $(this);
+            const url = $button.data('url');
+
+            $button.prop('disabled', true);
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    _token: csrfToken,
+                },
+                success: function(response) {
+                    // Update tampilan tombol dan ikon
+                    if (response.is_promoted) {
+                        $button.removeClass('btn-outline-danger').addClass('btn-danger');
+                        $button.find('i').removeClass('far fa-heart').addClass('fas fa-heart');
+                    } else {
+                        $button.removeClass('btn-danger').addClass('btn-outline-danger');
+                        $button.find('i').removeClass('fas fa-heart').addClass('far fa-heart');
+                    }
+
+                    alert(response.message);
+                    // Reload window agar Kotak Pengaturan Promosi (Admin Ads Box) terupdate
+                    window.location.reload();
+                },
+                error: function(xhr) {
+                    let errorMessage = 'Terjadi kesalahan tidak terduga.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    alert(errorMessage);
+                },
+                complete: function() {
+                    $button.prop('disabled', false);
+                }
+            });
+        });
+    });
+</script>
 @endsection
