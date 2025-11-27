@@ -215,8 +215,7 @@ class AdminController extends Controller
                 'bread_id' => $bread->id,
                 'current_status' => $bread->is_promoted,
                 'ip' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-                'has_csrf' => $request->hasHeader('X-CSRF-TOKEN')
+                'is_ajax' => $request->ajax() || $request->wantsJson()
             ]);
 
             // 1. Inisialisasi dan hitung status
@@ -230,18 +229,27 @@ class AdminController extends Controller
 
                 // Cek batas maksimum
                 if ($currentPromotedCount >= $maxPromoted) {
-                    // Kuota penuh, kirim respon error (400)
+                    // Kuota penuh
                     \Log::warning('Toggle Promoted Failed: Max limit reached', [
                         'bread_id' => $bread->id,
                         'current_count' => $currentPromotedCount
                     ]);
                     
-                    return response()->json([
-                        'success' => false,
-                        'is_promoted' => false,
-                        'count' => $currentPromotedCount,
-                        'message' => 'Gagal: Batas maksimum ' . $maxPromoted . ' menu promosi sudah tercapai.',
-                    ], 400);
+                    $message = 'Gagal: Batas maksimum ' . $maxPromoted . ' menu promosi sudah tercapai.';
+                    
+                    // Jika AJAX request, return JSON
+                    if ($request->ajax() || $request->wantsJson()) {
+                        return response()->json([
+                            'success' => false,
+                            'is_promoted' => false,
+                            'count' => $currentPromotedCount,
+                            'message' => $message,
+                        ], 400);
+                    }
+                    
+                    // Jika form submission, redirect dengan error
+                    return redirect()->route('admin.breads.index')
+                        ->with('error', $message);
                 }
 
                 // Aktifkan promosi
@@ -250,12 +258,21 @@ class AdminController extends Controller
 
                 \Log::info('Promoted Successfully', ['bread_id' => $bread->id]);
 
-                return response()->json([
-                    'success' => true,
-                    'is_promoted' => true,
-                    'count' => $currentPromotedCount + 1,
-                    'message' => $bread->name . ' berhasil dipromosikan.',
-                ]);
+                $message = $bread->name . ' berhasil dipromosikan.';
+                
+                // Jika AJAX request, return JSON
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json([
+                        'success' => true,
+                        'is_promoted' => true,
+                        'count' => $currentPromotedCount + 1,
+                        'message' => $message,
+                    ]);
+                }
+                
+                // Jika form submission, redirect dengan success
+                return redirect()->route('admin.breads.index')
+                    ->with('success', $message);
             }
 
             // 3. Jika statusnya akan dinonaktifkan (TRUE -> FALSE)
@@ -265,24 +282,42 @@ class AdminController extends Controller
 
                 \Log::info('Unpromoted Successfully', ['bread_id' => $bread->id]);
 
-                return response()->json([
-                    'success' => true,
-                    'is_promoted' => false,
-                    'count' => $currentPromotedCount - 1,
-                    'message' => $bread->name . ' promosi telah dimatikan.',
-                ]);
+                $message = $bread->name . ' promosi telah dimatikan.';
+                
+                // Jika AJAX request, return JSON
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json([
+                        'success' => true,
+                        'is_promoted' => false,
+                        'count' => $currentPromotedCount - 1,
+                        'message' => $message,
+                    ]);
+                }
+                
+                // Jika form submission, redirect dengan success
+                return redirect()->route('admin.breads.index')
+                    ->with('success', $message);
             }
         } catch (\Exception $e) {
             \Log::error('Toggle Promoted Error', [
-                'bread_id' => $bread->id,
+                'bread_id' => $bread->id ?? 'unknown',
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
             
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
-            ], 500);
+            $message = 'Terjadi kesalahan: ' . $e->getMessage();
+            
+            // Jika AJAX request, return JSON
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $message,
+                ], 500);
+            }
+            
+            // Jika form submission, redirect dengan error
+            return redirect()->route('admin.breads.index')
+                ->with('error', $message);
         }
     }
 }

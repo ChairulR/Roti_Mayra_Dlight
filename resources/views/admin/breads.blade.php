@@ -5,6 +5,21 @@
 
     <h2 class="fw-bold mb-4 text-brown">Manajemen Menu</h2>
 
+    {{-- Flash Messages --}}
+    @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    @endif
+
     {{-- ===========================
         FILTERING & SEARCH BAR
     ============================ --}}
@@ -107,15 +122,19 @@
                     alt="{{ $bread->name }}">
                 @endif
 
-                {{-- TOMBOL TOGGLE PROMOSI --}}
-                <button type="button"
-                    class="btn btn-sm promoted-toggle-btn {{ $bread->is_promoted ? 'btn-danger' : 'btn-outline-danger' }}"
-                    data-bread-id="{{ $bread->id }}"
-                    data-url="{{ route('admin.breads.toggle_promoted', $bread->id) }}"
-                    title="Toggle Promosi"
-                    style="position: absolute; top: 10px; right: 10px; z-index: 10; border-radius: 50%; width: 40px; height: 40px; padding: 0;">
-                    <i class="{{ $bread->is_promoted ? 'fas fa-heart' : 'far fa-heart' }}"></i>
-                </button>
+                {{-- TOMBOL TOGGLE PROMOSI menggunakan FORM (lebih reliable) --}}
+                <form method="POST" 
+                    action="{{ route('admin.breads.toggle_promoted', $bread->id) }}" 
+                    style="position: absolute; top: 10px; right: 10px; z-index: 10;"
+                    class="toggle-promoted-form">
+                    @csrf
+                    <button type="submit"
+                        class="btn btn-sm {{ $bread->is_promoted ? 'btn-danger' : 'btn-outline-danger' }}"
+                        title="Toggle Promosi"
+                        style="border-radius: 50%; width: 40px; height: 40px; padding: 0;">
+                        <i class="{{ $bread->is_promoted ? 'fas fa-heart' : 'far fa-heart' }}"></i>
+                    </button>
+                </form>
 
                 <div class="card-body">
 
@@ -244,114 +263,4 @@
     }
 </style>
 
-@endsection
-
-{{-- SKRIP AJAX ADS --}}
-@section('script')
-{{-- Pastikan jQuery sudah dimuat di layout admin Anda (admin.layouts.admin) --}}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        // Ambil CSRF token dari meta tag
-        const csrfToken = $('meta[name="csrf-token"]').attr('content');
-        
-        // Debug: log CSRF token untuk memastikan ada
-        console.log('CSRF Token:', csrfToken);
-
-        $('.promoted-toggle-btn').on('click', function(e) {
-            e.preventDefault();
-            
-            const $button = $(this);
-            const url = $button.data('url');
-            const breadId = $button.data('bread-id');
-            
-            // Debug: log URL dan data
-            console.log('Toggle URL:', url);
-            console.log('Bread ID:', breadId);
-            console.log('CSRF:', csrfToken);
-
-            // Validasi CSRF token
-            if (!csrfToken) {
-                alert('Error: CSRF token tidak ditemukan. Silakan refresh halaman.');
-                return;
-            }
-
-            $button.prop('disabled', true);
-
-            $.ajax({
-                url: url,
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json'
-                },
-                data: {
-                    _token: csrfToken
-                },
-                dataType: 'json',
-                success: function(response) {
-                    console.log('Success response:', response);
-                    
-                    // Update tampilan tombol dan ikon
-                    if (response.is_promoted) {
-                        $button.removeClass('btn-outline-danger').addClass('btn-danger');
-                        $button.find('i').removeClass('far fa-heart').addClass('fas fa-heart');
-                    } else {
-                        $button.removeClass('btn-danger').addClass('btn-outline-danger');
-                        $button.find('i').removeClass('fas fa-heart').addClass('far fa-heart');
-                    }
-
-                    alert(response.message);
-                    // Reload window agar Kotak Pengaturan Promosi (Admin Ads Box) terupdate
-                    window.location.reload();
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX Error:', {
-                        status: xhr.status,
-                        statusText: xhr.statusText,
-                        responseText: xhr.responseText,
-                        error: error,
-                        headers: xhr.getAllResponseHeaders()
-                    });
-                    
-                    let errorMessage = 'Terjadi kesalahan tidak terduga.';
-                    
-                    if (xhr.status === 419) {
-                        errorMessage = 'Session expired (419). Silakan refresh halaman dan coba lagi.';
-                    } else if (xhr.status === 403) {
-                        errorMessage = 'Akses ditolak (403). Anda tidak memiliki izin.';
-                    } else if (xhr.status === 404) {
-                        errorMessage = 'Route tidak ditemukan (404). URL: ' + url;
-                    } else if (xhr.status === 500) {
-                        errorMessage = 'Terjadi kesalahan di server (500). Silakan coba lagi.';
-                        // Tampilkan detail error jika ada
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            errorMessage += '\nDetail: ' + xhr.responseJSON.message;
-                        }
-                    } else if (xhr.status === 0) {
-                        errorMessage = 'Tidak dapat terhubung ke server. Cek koneksi internet Anda.';
-                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMessage = xhr.responseJSON.message;
-                    } else if (xhr.responseText) {
-                        // Coba parse error dari response text
-                        try {
-                            const response = JSON.parse(xhr.responseText);
-                            if (response.message) {
-                                errorMessage = response.message;
-                            }
-                        } catch (e) {
-                            console.error('Failed to parse error response:', e);
-                        }
-                    }
-                    
-                    alert(errorMessage);
-                    $button.prop('disabled', false);
-                },
-                complete: function() {
-                    console.log('AJAX request completed');
-                }
-            });
-        });
-    });
-</script>
 @endsection
