@@ -310,19 +310,38 @@
                         status: xhr.status,
                         statusText: xhr.statusText,
                         responseText: xhr.responseText,
-                        error: error
+                        error: error,
+                        headers: xhr.getAllResponseHeaders()
                     });
                     
                     let errorMessage = 'Terjadi kesalahan tidak terduga.';
                     
                     if (xhr.status === 419) {
-                        errorMessage = 'Session expired. Silakan refresh halaman dan coba lagi.';
+                        errorMessage = 'Session expired (419). Silakan refresh halaman dan coba lagi.';
                     } else if (xhr.status === 403) {
-                        errorMessage = 'Akses ditolak. Anda tidak memiliki izin.';
+                        errorMessage = 'Akses ditolak (403). Anda tidak memiliki izin.';
+                    } else if (xhr.status === 404) {
+                        errorMessage = 'Route tidak ditemukan (404). URL: ' + url;
                     } else if (xhr.status === 500) {
-                        errorMessage = 'Terjadi kesalahan di server. Silakan coba lagi.';
+                        errorMessage = 'Terjadi kesalahan di server (500). Silakan coba lagi.';
+                        // Tampilkan detail error jika ada
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage += '\nDetail: ' + xhr.responseJSON.message;
+                        }
+                    } else if (xhr.status === 0) {
+                        errorMessage = 'Tidak dapat terhubung ke server. Cek koneksi internet Anda.';
                     } else if (xhr.responseJSON && xhr.responseJSON.message) {
                         errorMessage = xhr.responseJSON.message;
+                    } else if (xhr.responseText) {
+                        // Coba parse error dari response text
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            if (response.message) {
+                                errorMessage = response.message;
+                            }
+                        } catch (e) {
+                            console.error('Failed to parse error response:', e);
+                        }
                     }
                     
                     alert(errorMessage);
