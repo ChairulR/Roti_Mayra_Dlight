@@ -252,21 +252,46 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
+        // Ambil CSRF token dari meta tag
         const csrfToken = $('meta[name="csrf-token"]').attr('content');
+        
+        // Debug: log CSRF token untuk memastikan ada
+        console.log('CSRF Token:', csrfToken);
 
-        $('.promoted-toggle-btn').on('click', function() {
+        $('.promoted-toggle-btn').on('click', function(e) {
+            e.preventDefault();
+            
             const $button = $(this);
             const url = $button.data('url');
+            const breadId = $button.data('bread-id');
+            
+            // Debug: log URL dan data
+            console.log('Toggle URL:', url);
+            console.log('Bread ID:', breadId);
+            console.log('CSRF:', csrfToken);
+
+            // Validasi CSRF token
+            if (!csrfToken) {
+                alert('Error: CSRF token tidak ditemukan. Silakan refresh halaman.');
+                return;
+            }
 
             $button.prop('disabled', true);
 
             $.ajax({
                 url: url,
                 type: 'POST',
-                data: {
-                    _token: csrfToken,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
                 },
+                data: {
+                    _token: csrfToken
+                },
+                dataType: 'json',
                 success: function(response) {
+                    console.log('Success response:', response);
+                    
                     // Update tampilan tombol dan ikon
                     if (response.is_promoted) {
                         $button.removeClass('btn-outline-danger').addClass('btn-danger');
@@ -280,15 +305,31 @@
                     // Reload window agar Kotak Pengaturan Promosi (Admin Ads Box) terupdate
                     window.location.reload();
                 },
-                error: function(xhr) {
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', {
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        responseText: xhr.responseText,
+                        error: error
+                    });
+                    
                     let errorMessage = 'Terjadi kesalahan tidak terduga.';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                    
+                    if (xhr.status === 419) {
+                        errorMessage = 'Session expired. Silakan refresh halaman dan coba lagi.';
+                    } else if (xhr.status === 403) {
+                        errorMessage = 'Akses ditolak. Anda tidak memiliki izin.';
+                    } else if (xhr.status === 500) {
+                        errorMessage = 'Terjadi kesalahan di server. Silakan coba lagi.';
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
                         errorMessage = xhr.responseJSON.message;
                     }
+                    
                     alert(errorMessage);
+                    $button.prop('disabled', false);
                 },
                 complete: function() {
-                    $button.prop('disabled', false);
+                    console.log('AJAX request completed');
                 }
             });
         });

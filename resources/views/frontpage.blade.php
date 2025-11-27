@@ -159,7 +159,7 @@
         <div class="swiper mySwiper" style="width:100%; height:300px; border-radius:12px; margin-bottom:40px; overflow:hidden;">
 
             <div class="swiper-wrapper">
-                @forelse($promotedBreads as $b) {{-- Loop melalui promotedBreads --}}
+                @forelse($promotedBreads as $b)
                 <div class="swiper-slide"
                     style="position: relative;">
 
@@ -192,7 +192,7 @@
             </div>
 
             {{-- Hanya tampilkan navigasi jika ada item promosi --}}
-            @if(isset($promotedBreads) && $promotedBreads->count() > 1)
+            @if($promotedBreads->count() > 1)
             <div class="swiper-button-next"></div>
             <div class="swiper-button-prev"></div>
             @endif
