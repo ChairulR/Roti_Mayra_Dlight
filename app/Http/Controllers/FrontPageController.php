@@ -22,9 +22,9 @@ class FrontPageController extends Controller
                 return $bread->averageRating();
             })
             ->take(6);
-        $promotedBreads = Bread::where('is_promoted', true)
-            ->limit(3)
-            ->get();
+
+        // Get promoted breads for slider
+        $promotedBreads = Bread::where('is_promoted', true)->limit(3)->get();
 
         return view('frontpage', compact('categories', 'topRatedProducts', 'promotedBreads'));
     }

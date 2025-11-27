@@ -207,8 +207,16 @@ class AdminController extends Controller
             ->with('success', 'Data roti berhasil diperbarui!');
     }
 
-    public function togglePromoted(Bread $bread)
+    public function togglePromoted(Request $request, Bread $bread)
     {
+        // Log untuk debugging di production
+        \Log::info('Toggle Promoted Request', [
+            'bread_id' => $bread->id,
+            'current_status' => $bread->is_promoted,
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
+
         // 1. Inisialisasi dan hitung status
         $maxPromoted = 3;
         // Hitung menu yang sedang dipromosikan
@@ -221,6 +229,11 @@ class AdminController extends Controller
             // Cek batas maksimum
             if ($currentPromotedCount >= $maxPromoted) {
                 // Kuota penuh, kirim respon error (400)
+                \Log::warning('Toggle Promoted Failed: Max limit reached', [
+                    'bread_id' => $bread->id,
+                    'current_count' => $currentPromotedCount
+                ]);
+                
                 return response()->json([
                     'success' => false,
                     'is_promoted' => false,
@@ -232,6 +245,8 @@ class AdminController extends Controller
             // Aktifkan promosi
             $bread->is_promoted = true;
             $bread->save();
+
+            \Log::info('Promoted Successfully', ['bread_id' => $bread->id]);
 
             return response()->json([
                 'success' => true,
@@ -245,6 +260,8 @@ class AdminController extends Controller
         else {
             $bread->is_promoted = false;
             $bread->save();
+
+            \Log::info('Unpromoted Successfully', ['bread_id' => $bread->id]);
 
             return response()->json([
                 'success' => true,
