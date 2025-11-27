@@ -209,66 +209,80 @@ class AdminController extends Controller
 
     public function togglePromoted(Request $request, Bread $bread)
     {
-        // Log untuk debugging di production
-        \Log::info('Toggle Promoted Request', [
-            'bread_id' => $bread->id,
-            'current_status' => $bread->is_promoted,
-            'ip' => $request->ip(),
-            'user_agent' => $request->userAgent()
-        ]);
+        try {
+            // Log untuk debugging di production
+            \Log::info('Toggle Promoted Request', [
+                'bread_id' => $bread->id,
+                'current_status' => $bread->is_promoted,
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'has_csrf' => $request->hasHeader('X-CSRF-TOKEN')
+            ]);
 
-        // 1. Inisialisasi dan hitung status
-        $maxPromoted = 3;
-        // Hitung menu yang sedang dipromosikan
-        $currentPromotedCount = Bread::where('is_promoted', true)->count();
-        $isCurrentlyPromoted = $bread->is_promoted;
+            // 1. Inisialisasi dan hitung status
+            $maxPromoted = 3;
+            // Hitung menu yang sedang dipromosikan
+            $currentPromotedCount = Bread::where('is_promoted', true)->count();
+            $isCurrentlyPromoted = $bread->is_promoted;
 
-        // 2. Jika statusnya akan diaktifkan (FALSE -> TRUE)
-        if (!$isCurrentlyPromoted) {
+            // 2. Jika statusnya akan diaktifkan (FALSE -> TRUE)
+            if (!$isCurrentlyPromoted) {
 
-            // Cek batas maksimum
-            if ($currentPromotedCount >= $maxPromoted) {
-                // Kuota penuh, kirim respon error (400)
-                \Log::warning('Toggle Promoted Failed: Max limit reached', [
-                    'bread_id' => $bread->id,
-                    'current_count' => $currentPromotedCount
-                ]);
-                
+                // Cek batas maksimum
+                if ($currentPromotedCount >= $maxPromoted) {
+                    // Kuota penuh, kirim respon error (400)
+                    \Log::warning('Toggle Promoted Failed: Max limit reached', [
+                        'bread_id' => $bread->id,
+                        'current_count' => $currentPromotedCount
+                    ]);
+                    
+                    return response()->json([
+                        'success' => false,
+                        'is_promoted' => false,
+                        'count' => $currentPromotedCount,
+                        'message' => 'Gagal: Batas maksimum ' . $maxPromoted . ' menu promosi sudah tercapai.',
+                    ], 400);
+                }
+
+                // Aktifkan promosi
+                $bread->is_promoted = true;
+                $bread->save();
+
+                \Log::info('Promoted Successfully', ['bread_id' => $bread->id]);
+
                 return response()->json([
-                    'success' => false,
-                    'is_promoted' => false,
-                    'count' => $currentPromotedCount,
-                    'message' => 'Gagal: Batas maksimum ' . $maxPromoted . ' menu promosi sudah tercapai.',
-                ], 400);
+                    'success' => true,
+                    'is_promoted' => true,
+                    'count' => $currentPromotedCount + 1,
+                    'message' => $bread->name . ' berhasil dipromosikan.',
+                ]);
             }
 
-            // Aktifkan promosi
-            $bread->is_promoted = true;
-            $bread->save();
+            // 3. Jika statusnya akan dinonaktifkan (TRUE -> FALSE)
+            else {
+                $bread->is_promoted = false;
+                $bread->save();
 
-            \Log::info('Promoted Successfully', ['bread_id' => $bread->id]);
+                \Log::info('Unpromoted Successfully', ['bread_id' => $bread->id]);
 
-            return response()->json([
-                'success' => true,
-                'is_promoted' => true,
-                'count' => $currentPromotedCount + 1,
-                'message' => $bread->name . ' berhasil dipromosikan.',
+                return response()->json([
+                    'success' => true,
+                    'is_promoted' => false,
+                    'count' => $currentPromotedCount - 1,
+                    'message' => $bread->name . ' promosi telah dimatikan.',
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Toggle Promoted Error', [
+                'bread_id' => $bread->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
-        }
-
-        // 3. Jika statusnya akan dinonaktifkan (TRUE -> FALSE)
-        else {
-            $bread->is_promoted = false;
-            $bread->save();
-
-            \Log::info('Unpromoted Successfully', ['bread_id' => $bread->id]);
-
+            
             return response()->json([
-                'success' => true,
-                'is_promoted' => false,
-                'count' => $currentPromotedCount - 1,
-                'message' => $bread->name . ' promosi telah dimatikan.',
-            ]);
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
         }
     }
 }

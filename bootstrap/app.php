@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'user' => \App\Http\Middleware\UserMiddleware::class,
         ]);
+        
+        // Tambahkan stateful API untuk AJAX requests
+        $middleware->statefulApi();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
