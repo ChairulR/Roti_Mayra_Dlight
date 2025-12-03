@@ -354,3 +354,35 @@ textarea {
     min-height: 55px;
     /* tinggi konsisten */
 }
+
+/* Gaya untuk Badge Status */
+.badge-pending {
+    background-color: #ffc107; /* Kuning */
+    color: #333;
+}
+
+.badge-completed {
+    background-color: #28a745; /* Hijau */
+    color: #fff;
+}
+
+/* Gaya untuk Tabel */
+.card-header {
+    background-color: #4b3713; 
+    color: white;
+}
+
+.table-bordered {
+    border-color: #4e430e;
+}
+
+/* Gaya untuk Tombol Aksi */
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
