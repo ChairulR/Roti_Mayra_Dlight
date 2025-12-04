@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\Admin\OrderController; // OK
 use App\Http\Middleware\AdminMiddleware;
 
 
@@ -23,15 +24,11 @@ Route::get('/about', [FrontPageController::class, 'about'])->name('about');
 
 //Cart
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/add/{bread}', [CartController::class, 'add'])->name('cart.add');
-Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
-Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
-Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 Route::post('/cart/add/{bread}', [CartController::class, 'add'])->name('cart.add')->middleware('auth');
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update')->middleware('auth');
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove')->middleware('auth');
 Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear')->middleware('auth');
-Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::post('/checkout/process', [CartController::class, 'processOrder'])->name('cart.process');
 
 // Profile (requires auth)
 Route::get('/profile', [AuthController::class, 'profile'])->name('profile')->middleware('auth');
@@ -54,7 +51,6 @@ Route::delete('/admin/breads/{bread}', [AdminController::class, 'destroyBread'])
 	->name('admin.breads.destroy')
 	->middleware(AdminMiddleware::class);
 
-// Additional admin pages (views) — make sure admin can open add-menu, breads list, categories, and edit pages
 Route::get('/admin/add-menu', [AdminController::class, 'addMenu'])
 	->name('admin.addmenu')
 	->middleware(AdminMiddleware::class);
@@ -78,6 +74,7 @@ Route::put('/admin/breads/{id}', [AdminController::class, 'updateBread'])
 Route::post('/admin/breads/{bread}/toggle-promoted', [AdminController::class, 'togglePromoted'])
 	->name('admin.breads.toggle_promoted')
 	->middleware(AdminMiddleware::class);
+
 // Admin routes — Admin mengatur banner
 Route::middleware([AdminMiddleware::class])
 	->prefix('admin')
@@ -92,4 +89,13 @@ Route::get('/admin/breads/filter', [AdminController::class, 'breads'])
 // Hapus kategori
 Route::delete('/admin/categories/{id}', [AdminController::class, 'deleteCategory'])
 	->name('admin.categories.delete')
+	->middleware(AdminMiddleware::class);
+
+// Riwayat Pesanan (Dipindah dan diberi prefix/name yang benar)
+Route::get('/admin/orders', [OrderController::class, 'index'])
+	->name('admin.orders.index') // Nama route sudah benar: admin.orders.index
+	->middleware(AdminMiddleware::class);
+
+Route::post('/admin/orders/{order}/status', [OrderController::class, 'updateStatus'])
+	->name('admin.orders.updateStatus')
 	->middleware(AdminMiddleware::class);
