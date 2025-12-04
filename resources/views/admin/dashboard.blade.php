@@ -3,7 +3,7 @@
 @section('content')
 
 {{-- ======================================= --}}
-{{-- 🔥 STYLES DAN SCRIPT UNTUK NOTIFIKASI (Diposisikan di atas untuk loading) 🔥 --}}
+{{-- STYLES DAN SCRIPT UNTUK NOTIFIKASI (Diposisikan di atas untuk loading) --}}
 {{-- ======================================= --}}
 <style>
     /* --- Penataan Umum Header --- */
@@ -136,7 +136,7 @@
         <p>Selamat datang di panel admin Mayra D'Light</p>
     </div>
 
-    {{-- 🔥 WADAH NOTIFIKASI BARU (Pushed to Right menggunakan margin-left: auto pada CSS) 🔥 --}}
+    {{-- WADAH NOTIFIKASI BARU (Pushed to Right menggunakan margin-left: auto pada CSS) --}}
     <div class="notification-container">
 
         {{-- Tombol Notifikasi --}}

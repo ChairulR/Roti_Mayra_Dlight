@@ -18,23 +18,16 @@ class AdminController extends Controller
         $categories = Category::all();
         $selectedCategory = $request->category ?? null;
 
-        // Filtering roti berdasarkan kategori
         $breads = Bread::with('category')
             ->when($selectedCategory, fn($q) => $q->where('category_id', $selectedCategory))
             ->get();
 
-        // ====================================
-        // 🔥 LOGIKA NOTIFIKASI RATING BARU 🔥
-        // ====================================
-        // Ambil 10 Rating/Komentar terbaru untuk Menu Roti
         $latestRatings = Rating::where('rateable_type', Bread::class)
-            ->with('user', 'rateable') // Eager load user (pelanggan) dan rateable (Bread)
-            ->orderBy('created_at', 'desc') // Diurutkan dari yang terbaru
-            ->limit(10) // Hanya ambil 10 data
+            ->with('user', 'rateable')
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
             ->get();
 
-        // Hitung total Rating/Komentar untuk badge notifikasi
-        // Catatan: Jika Anda memiliki kolom 'is_read', ganti count() dengan ->where('is_read', 0)->count()
         $newRatingsCount = Rating::where('rateable_type', Bread::class)
             ->count();
 
@@ -98,9 +91,6 @@ class AdminController extends Controller
     public function deleteCategory($id)
     {
         $category = Category::findOrFail($id);
-
-        // Opsional: hapus semua roti yang memiliki kategori ini
-        // Bread::where('category_id', $id)->delete();
 
         $category->delete();
 
@@ -210,7 +200,6 @@ class AdminController extends Controller
     public function togglePromoted(Request $request, Bread $bread)
     {
         try {
-            // Log untuk debugging di production
             \Log::info('Toggle Promoted Request', [
                 'bread_id' => $bread->id,
                 'current_status' => $bread->is_promoted,
@@ -218,18 +207,13 @@ class AdminController extends Controller
                 'is_ajax' => $request->ajax() || $request->wantsJson()
             ]);
 
-            // 1. Inisialisasi dan hitung status
             $maxPromoted = 3;
-            // Hitung menu yang sedang dipromosikan
             $currentPromotedCount = Bread::where('is_promoted', true)->count();
             $isCurrentlyPromoted = $bread->is_promoted;
 
-            // 2. Jika statusnya akan diaktifkan (FALSE -> TRUE)
             if (!$isCurrentlyPromoted) {
 
-                // Cek batas maksimum
                 if ($currentPromotedCount >= $maxPromoted) {
-                    // Kuota penuh
                     \Log::warning('Toggle Promoted Failed: Max limit reached', [
                         'bread_id' => $bread->id,
                         'current_count' => $currentPromotedCount
@@ -237,7 +221,6 @@ class AdminController extends Controller
                     
                     $message = 'Gagal: Batas maksimum ' . $maxPromoted . ' menu promosi sudah tercapai.';
                     
-                    // Jika AJAX request, return JSON
                     if ($request->ajax() || $request->wantsJson()) {
                         return response()->json([
                             'success' => false,
@@ -247,12 +230,10 @@ class AdminController extends Controller
                         ], 400);
                     }
                     
-                    // Jika form submission, redirect dengan error
                     return redirect()->route('admin.breads.index')
                         ->with('error', $message);
                 }
 
-                // Aktifkan promosi
                 $bread->is_promoted = true;
                 $bread->save();
 
@@ -260,7 +241,6 @@ class AdminController extends Controller
 
                 $message = $bread->name . ' berhasil dipromosikan.';
                 
-                // Jika AJAX request, return JSON
                 if ($request->ajax() || $request->wantsJson()) {
                     return response()->json([
                         'success' => true,
@@ -270,12 +250,10 @@ class AdminController extends Controller
                     ]);
                 }
                 
-                // Jika form submission, redirect dengan success
                 return redirect()->route('admin.breads.index')
                     ->with('success', $message);
             }
 
-            // 3. Jika statusnya akan dinonaktifkan (TRUE -> FALSE)
             else {
                 $bread->is_promoted = false;
                 $bread->save();
@@ -284,7 +262,6 @@ class AdminController extends Controller
 
                 $message = $bread->name . ' promosi telah dimatikan.';
                 
-                // Jika AJAX request, return JSON
                 if ($request->ajax() || $request->wantsJson()) {
                     return response()->json([
                         'success' => true,
@@ -294,7 +271,6 @@ class AdminController extends Controller
                     ]);
                 }
                 
-                // Jika form submission, redirect dengan success
                 return redirect()->route('admin.breads.index')
                     ->with('success', $message);
             }
@@ -307,7 +283,6 @@ class AdminController extends Controller
             
             $message = 'Terjadi kesalahan: ' . $e->getMessage();
             
-            // Jika AJAX request, return JSON
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
@@ -315,7 +290,6 @@ class AdminController extends Controller
                 ], 500);
             }
             
-            // Jika form submission, redirect dengan error
             return redirect()->route('admin.breads.index')
                 ->with('error', $message);
         }

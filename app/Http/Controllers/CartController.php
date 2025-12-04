@@ -119,7 +119,6 @@ class CartController extends Controller
         $message .= "Terima kasih telah berbelanja! \n";
         $message .= "_Mohon konfirmasi pesanan ini_ ";
         
-        // Change this to your business WhatsApp number
         $waNumber = env('WHATSAPP_NUMBER');
         
         // URL encode the message

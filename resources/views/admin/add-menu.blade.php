@@ -4,7 +4,7 @@
 <div class="container">
     <h1>Tambah Menu & Kategori</h1>
 
-    {{-- ✅ Form Tambah Kategori (AJAX) --}}
+    {{-- Form Tambah Kategori (AJAX) --}}
     <section class="form-section">
         <h2>Tambah Kategori</h2>
         <form id="category-form" action="{{ route('admin.categories.store') }}" method="POST">
@@ -18,7 +18,7 @@
         </p>
     </section>
 
-    {{-- ✅ Form Tambah Roti --}}
+    {{-- Form Tambah Roti --}}
     <section class="form-section">
         <h2>Tambah Roti</h2>
         <form action="{{ route('admin.breads.store') }}" method="POST" enctype="multipart/form-data">
@@ -40,7 +40,7 @@
         </form>
     </section>
 
-    {{-- ✅ Daftar Roti (Kolom Aksi dihilangkan) --}}
+    {{-- Daftar Roti --}}
     <section class="table-section">
         <h2>Daftar Roti</h2>
         <table>
@@ -81,7 +81,7 @@
     </section>
 </div>
 
-{{-- ✅ Script AJAX supaya kategori langsung muncul (Tidak Berubah) --}}
+{{-- Script AJAX supaya kategori langsung muncul (Tidak Berubah) --}}
 <script>
     document.getElementById('category-form').addEventListener('submit', async function(e) {
         e.preventDefault();
